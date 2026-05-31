@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Engram — your handwritten notes, as a knowledge graph</title>
+  <meta name="description" content="Engram turns a Microsoft OneNote notebook (exported as PDF) into a local, Obsidian-native Markdown vault on your Mac — faithful per-note summaries written by a local vision model, organized as a hierarchy that is also a graph." />
+  <meta name="color-scheme" content="light" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Engram — your handwritten notes, as a knowledge graph" />
+  <meta property="og:description" content="OneNote PDF export → local-VLM summaries → an Obsidian vault that is a hierarchy and a graph. Local-first, incremental, macOS-native." />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" href="assets/engram_logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ======================= NAV ======================= -->
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="#top">
+      <img src="assets/engram_logo.svg" alt="Engram logo" width="28" height="28" />
+      <span>Engram</span>
+    </a>
+    <nav class="nav__links" aria-label="Section navigation">
+      <a href="#what">What it is</a>
+      <a href="#graph">Knowledge graph</a>
+      <a href="#pipeline">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#start">Get started</a>
+      <a href="#status">Status</a>
+    </nav>
+    <a class="nav__cta" href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">GitHub ↗</a>
+  </header>
+
+  <!-- ======================= HERO ======================= -->
+  <main id="top">
+    <section class="hero">
+      <div class="hero__inner">
+        <p class="hero__eyebrow">macOS · local vision model · incremental</p>
+        <h1 class="hero__title">Your handwritten notes,<br /><span class="grad">as a knowledge graph.</span></h1>
+        <p class="hero__lede">
+          <strong>Engram</strong> turns a Microsoft OneNote notebook — exported as one big PDF —
+          into a local, <a href="https://obsidian.md" target="_blank" rel="noopener">Obsidian</a>-native
+          Markdown vault on your Mac. A <em>local</em> vision-language model reads every page
+          (handwriting, typed text, diagrams, photos) and writes a faithful summary above the
+          original page. A second pass links related notes — so your vault is
+          <strong>a hierarchy that is also a graph.</strong>
+        </p>
+
+        <div class="hero__badges">
+          <span class="badge">🔒 Local-first · nothing leaves your Mac</span>
+          <span class="badge">🪶 The raw page is always the source of truth</span>
+          <span class="badge">♻️ Incremental &amp; idempotent</span>
+        </div>
+
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="#graph">See the graph ↓</a>
+          <a class="btn" href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">View source</a>
+          <a class="btn" href="#start">Quick start</a>
+        </div>
+
+        <p class="hero__by">
+          A research prototype by
+          <a href="https://kbian.org" target="_blank" rel="noopener">Kaiwen Bian</a>
+        </p>
+      </div>
+
+      <!-- prototype banner -->
+      <div class="protobar" role="note">
+        <span class="protobar__tag">PROTOTYPE</span>
+        <span>
+          This is a very early <strong>v0.1</strong> prototype. So far it only ingests
+          <strong>Microsoft OneNote notebooks exported as PDF</strong>, and runs on
+          <strong>macOS&nbsp;14+ (Apple&nbsp;Silicon)</strong>. See
+          <a href="#status">prototype status</a> for what is and isn't validated yet.
+        </span>
+      </div>
+    </section>
+
+    <!-- ======================= WHAT IT IS ======================= -->
+    <section class="section" id="what">
+      <div class="section__head reveal">
+        <h2>From an opaque PDF to a navigable brain</h2>
+        <p class="section__sub">
+          You already write notes on an iPad with Apple Pencil in OneNote. You export a notebook
+          to PDF (OneNote&nbsp;Windows → <code>File → Export → Notebook → PDF</code>). That gives you
+          one giant, unsearchable file. Engram turns it into something you can actually think with.
+        </p>
+      </div>
+
+      <div class="whatgrid">
+        <div class="whatcard whatcard--before reveal">
+          <div class="whatcard__label">Before</div>
+          <div class="pdfblob">
+            <div class="pdfblob__pages"></div>
+            <div class="pdfblob__name">Skateboarding&nbsp;Notes.pdf</div>
+            <div class="pdfblob__meta">1 file · 40+ pages · not searchable · no structure</div>
+          </div>
+        </div>
+
+        <div class="whatarrow reveal" aria-hidden="true">
+          <span>engram&nbsp;build</span>
+          <svg viewBox="0 0 120 24" width="120" height="24"><path d="M2 12h104" stroke="currentColor" stroke-width="2" fill="none"/><path d="M104 5l12 7-12 7z" fill="currentColor"/></svg>
+        </div>
+
+        <div class="whatcard whatcard--after reveal">
+          <div class="whatcard__label">After</div>
+          <div class="vaulttree">
+            <div class="tline"><span class="tnode tnode--dom">📁 Skateboarding</span></div>
+            <div class="tline tind1"><span class="tnode tnode--sec">📁 Ollies</span></div>
+            <div class="tline tind2"><span class="tnode tnode--md">📄 Pop &amp; timing.md</span><span class="tpdf">+ .pdf</span></div>
+            <div class="tline tind2"><span class="tnode tnode--md">📄 Level-out.md</span><span class="tpdf">+ .pdf</span></div>
+            <div class="tline tind1"><span class="tnode tnode--sec">📁 Carving</span></div>
+            <div class="tline tind2"><span class="tnode tnode--md">📄 Edge control.md</span><span class="tpdf">+ .pdf</span></div>
+            <div class="tline tind2 trel"><span class="treltxt">↳ ## Related → [[Pop &amp; timing]]</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= KNOWLEDGE GRAPH ======================= -->
+    <section class="section section--graph" id="graph">
+      <div class="section__head reveal">
+        <h2>A hierarchy that is also a graph</h2>
+        <p class="section__sub">
+          Notebook → Section → Note gives you the tree. A second, holistic <em>linking pass</em>
+          reads every summary and connects related notes (shared concept · prerequisite · variation).
+          The bundled macOS app renders the whole notebook as an interactive, force-directed graph —
+          <strong>drag a node, or click one to light up its connections.</strong>
+        </p>
+      </div>
+
+      <figure class="graphstage reveal">
+        <canvas id="graph-canvas" aria-label="Interactive knowledge graph mockup"></canvas>
+
+        <div class="graphstage__legend">
+          <span class="lg"><i class="dot dot--dom"></i> Domain <em>(notebook)</em></span>
+          <span class="lg"><i class="dot dot--con"></i> Concept <em>(section)</em></span>
+          <span class="lg"><i class="dot dot--md"></i> .md <em>(note)</em></span>
+          <span class="lg"><i class="line line--hier"></i> hierarchy</span>
+          <span class="lg"><i class="line line--cross"></i> cross-link</span>
+        </div>
+
+        <button class="graphstage__reset" id="graph-reset" type="button">↻ shake</button>
+        <figcaption class="graphstage__cap">
+          Conceptual mockup of the app's knowledge-graph view · same physics as the real
+          <code>GraphEngine</code> (repulsion · springs · gravity · damping). Click a node.
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- ======================= PIPELINE / SEE IT WORK ======================= -->
+    <section class="section" id="pipeline">
+      <div class="section__head reveal">
+        <h2>How a page becomes a note</h2>
+        <p class="section__sub">
+          Each note keeps its original page as a faithful per-note PDF <strong>leaf</strong>; the
+          summary is a navigable projection written above it — always one scroll from the ink.
+          Nothing is invented: typed text is preserved, handwriting is read, illegible parts are flagged.
+        </p>
+      </div>
+
+      <!-- animated transform: handwritten page -> markdown summary -->
+      <div class="transform reveal">
+        <!-- raw page -->
+        <div class="paper">
+          <div class="paper__scan"></div>
+          <div class="paper__title">Pop &amp; Timing</div>
+          <svg class="ink" viewBox="0 0 220 150" aria-hidden="true">
+            <path d="M14 40 C 26 22, 40 60, 52 38 S 78 20, 90 44" />
+            <path d="M16 64 C 40 58, 70 70, 110 60 S 170 52, 196 64" />
+            <path d="M16 84 C 50 80, 90 92, 140 82" />
+            <path d="M16 104 C 44 100, 66 112, 96 104" />
+            <path d="M120 96 l 40 -22 l 40 22" class="ink--diagram" />
+            <circle cx="160" cy="74" r="4" class="ink--diagram" />
+          </svg>
+          <div class="paper__tag">handwritten · ruled paper preserved</div>
+        </div>
+
+        <div class="transform__arrow" aria-hidden="true">
+          <span class="transform__chip">local VLM reads the page</span>
+          <svg viewBox="0 0 120 24" width="120" height="24"><path d="M2 12h104" stroke="currentColor" stroke-width="2" fill="none"/><path d="M104 5l12 7-12 7z" fill="currentColor"/></svg>
+        </div>
+
+        <!-- rendered markdown -->
+        <div class="mdcard">
+          <div class="mdcard__fm">
+            <span>title: Pop &amp; Timing</span>
+            <span>section: Ollies</span>
+            <span>kind: handwritten</span>
+          </div>
+          <h3 class="md-h1">Pop &amp; Timing</h3>
+          <h4 class="md-h2">## Mechanics</h4>
+          <p class="md-p">Snap the tail down, then slide the front foot up the board to level it out.</p>
+          <ul class="md-ul">
+            <li>Pop comes from the <strong>back foot</strong>, not a jump.</li>
+            <li>Timing: pop → drag → level at the apex.</li>
+          </ul>
+          <div class="md-math">$$h \approx \tfrac{1}{2}\,v_{\text{pop}}\,t$$</div>
+          <pre class="md-code"><code>![[Pop &amp; Timing.pdf]]   <span class="cmt"># the raw leaf, embedded</span></code></pre>
+          <div class="mdcard__rel">## Related → <a>[[Level-out]]</a> · <a>[[Edge control]]</a></div>
+        </div>
+      </div>
+
+      <!-- the 6 stages -->
+      <ol class="stages reveal">
+        <li><span class="stages__n">1</span><b>Parse</b><span>PDF → notes; recover Notebook → Section → Note from the text layer <em>(PyMuPDF, no model)</em>.</span></li>
+        <li><span class="stages__n">2</span><b>Leaf</b><span>Split each note's original page(s) into a faithful per-note PDF + page images.</span></li>
+        <li><span class="stages__n">3</span><b>Summarize</b><span>A local vision model writes hierarchical Markdown — headings, LaTeX, fenced code.</span></li>
+        <li><span class="stages__n">4</span><b>Roll-up</b><span>Section &amp; notebook overview notes (MOCs) wikilink the tree together.</span></li>
+        <li><span class="stages__n">5</span><b>Vault</b><span>Idempotent write: <code>&lt;Notebook&gt;/&lt;Section&gt;/&lt;Title&gt;.md</code> beside <code>.pdf</code>.</span></li>
+        <li><span class="stages__n">6</span><b>Link</b><span>Holistic pass adds <code>## Related</code> wikilinks across notes → the graph.</span></li>
+      </ol>
+    </section>
+
+    <!-- ======================= FEATURES ======================= -->
+    <section class="section" id="features">
+      <div class="section__head reveal">
+        <h2>What makes it different</h2>
+        <p class="section__sub">Built for a personal knowledge base you actually trust — local, faithful, and reproducible.</p>
+      </div>
+
+      <div class="features">
+        <article class="feat reveal">
+          <div class="feat__ic">🔒</div>
+          <h3>Local &amp; private</h3>
+          <p>The vision model runs on-device via <a href="https://github.com/Blaizzy/mlx-vlm" target="_blank" rel="noopener">mlx-vlm</a> (Qwen2.5-VL on Apple Silicon). No cloud, no upload, no API key — your notes never leave the Mac.</p>
+        </article>
+        <article class="feat reveal">
+          <div class="feat__ic">🪶</div>
+          <h3>Faithful, not inventive</h3>
+          <p>The raw page is the source of truth and is embedded in every note. Summaries reproduce what's on the page; illegible parts are flagged. A clean-reading but hallucinated summary is treated as a bug.</p>
+        </article>
+        <article class="feat reveal">
+          <div class="feat__ic">🕸️</div>
+          <h3>Hierarchy <em>and</em> graph</h3>
+          <p>Your OneNote structure becomes folders; a second linking pass adds <code>## Related</code> cross-links — safe by construction (no dangling links, symmetric, capped) — so connections aren't only top-down.</p>
+        </article>
+        <article class="feat reveal">
+          <div class="feat__ic">♻️</div>
+          <h3>Incremental &amp; idempotent</h3>
+          <p>Re-export and re-build: only changed or new notes are re-processed, keyed on a rendered-page fingerprint. An unchanged export is a true no-op — the model never even loads — and every run reports exactly what changed.</p>
+        </article>
+        <article class="feat reveal">
+          <div class="feat__ic">📝</div>
+          <h3>Obsidian-native output</h3>
+          <p>Plain Markdown on disk — frontmatter, <code>[[wikilinks]]</code>, embedded PDFs, section/notebook overviews. Open the folder in <a href="https://obsidian.md" target="_blank" rel="noopener">Obsidian</a>, or paste big slices into a long-context LLM (Karpathy's "second brain").</p>
+        </article>
+        <article class="feat reveal">
+          <div class="feat__ic">🖥️</div>
+          <h3>Native macOS app</h3>
+          <p>A SwiftUI app to import/replace a PDF (with a change report), browse notes by section, read each summary beside its original page — and explore the interactive knowledge graph.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ======================= GET STARTED ======================= -->
+    <section class="section section--start" id="start">
+      <div class="section__head reveal">
+        <h2>Run it locally</h2>
+        <p class="section__sub">Python 3.11+ and <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener">uv</a> on macOS 14+ (Apple Silicon). The first run downloads the local model (~5&nbsp;GB).</p>
+      </div>
+
+      <div class="codecol reveal">
+        <div class="codeblock">
+          <div class="codeblock__bar"><span>terminal</span><button class="copy" type="button">copy</button></div>
+<pre><code><span class="cmt"># 1 · set up the environment</span>
+uv sync --extra dev
+
+<span class="cmt"># 2 · inspect the structure recovered from a OneNote PDF export</span>
+uv run python -m engram inspect "Skateboarding Notes.pdf"
+
+<span class="cmt"># 3 · build (or incrementally update) the vault</span>
+uv run python -m engram build "Skateboarding Notes.pdf"
+
+<span class="cmt"># 4 · add cross-note links → the knowledge graph</span>
+uv run python -m engram link "Skateboarding Notes"
+
+uv run python -m engram status</code></pre>
+        </div>
+
+        <div class="codenote">
+          <p>Output lands in <code>~/Engram/&lt;Notebook&gt;/&lt;Section&gt;/&lt;Title&gt;.{md,pdf}</code> — open <code>~/Engram</code> in Obsidian.</p>
+          <p>Prefer a GUI? Build the native app:</p>
+          <div class="codeblock codeblock--mini">
+            <div class="codeblock__bar"><span>macapp</span><button class="copy" type="button">copy</button></div>
+<pre><code>cd macapp && ./build_app.sh && open Engram.app</code></pre>
+          </div>
+          <a class="btn btn--primary btn--wide" href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">Full README &amp; source on GitHub ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= PROTOTYPE STATUS ======================= -->
+    <section class="section section--status" id="status">
+      <div class="section__head reveal">
+        <h2>Prototype status — the honest part</h2>
+        <p class="section__sub">
+          Engram's whole ethos is honesty over polish. This is a working v0.1 validated end-to-end
+          on a real notebook (18 notes, 73 links) — but it's early, and several things are heuristic
+          or not yet field-validated.
+        </p>
+      </div>
+
+      <div class="statusgrid reveal">
+        <div class="statuscol statuscol--yes">
+          <h3>✓ Works today</h3>
+          <ul>
+            <li>OneNote → PDF export → split per-note PDF leaves</li>
+            <li>Local-VLM hierarchical summaries (LaTeX + code)</li>
+            <li>Obsidian vault: wikilinks, overviews, embedded PDFs</li>
+            <li>Holistic cross-link pass → the knowledge graph</li>
+            <li>Incremental rebuilds with a change report</li>
+            <li>CLI + a native macOS app</li>
+          </ul>
+        </div>
+        <div class="statuscol statuscol--soon">
+          <h3>⚠ Prototype caveats</h3>
+          <ul>
+            <li><strong>OneNote PDF export only</strong> — no other capture sources yet</li>
+            <li><strong>macOS 14+ on Apple Silicon</strong> (~16&nbsp;GB RAM for the 7B model)</li>
+            <li>Structure parsing is heuristic &amp; locale-dependent (needs an English fallback)</li>
+            <li>Nested section subfolders are untested on a large notebook</li>
+            <li>Incremental determinism not yet field-validated on a real v2 export</li>
+            <li>One-way only (OneNote → vault); never written back</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= REFERENCES / CREDITS ======================= -->
+    <footer class="footer" id="refs">
+      <div class="footer__inner">
+        <div class="footer__col">
+          <h3>Engram</h3>
+          <p class="footer__tag">
+            <em>An engram is the physical trace a memory leaves in the brain.
+            This project is the digital trace your handwritten notes leave on your computer.</em>
+          </p>
+          <p>© <span id="year">2026</span> Kaiwen Bian · Released under the <a href="https://github.com/KevinBian107/engram/blob/master/LICENSE" target="_blank" rel="noopener">MIT License</a>.</p>
+        </div>
+
+        <div class="footer__col">
+          <h3>Built on &amp; references</h3>
+          <ul class="reflist">
+            <li><a href="https://obsidian.md" target="_blank" rel="noopener">Obsidian</a> — the vault is Obsidian-native (wikilinks, embeds, graph)</li>
+            <li><a href="https://www.onenote.com" target="_blank" rel="noopener">Microsoft OneNote</a> — the capture source (PDF export)</li>
+            <li><a href="https://github.com/Blaizzy/mlx-vlm" target="_blank" rel="noopener">mlx-vlm</a> + <a href="https://github.com/QwenLM/Qwen2.5-VL" target="_blank" rel="noopener">Qwen2.5-VL</a> — the local vision model</li>
+            <li><a href="https://pymupdf.readthedocs.io" target="_blank" rel="noopener">PyMuPDF</a> — PDF parsing &amp; rendering</li>
+            <li><a href="https://github.com/KevinBian107/propel" target="_blank" rel="noopener">Propel</a> — the research workflow this was built with</li>
+            <li><a href="https://karpathy.bearblog.dev/" target="_blank" rel="noopener">Karpathy's "second brain"</a> — the long-context-LLM workflow</li>
+          </ul>
+        </div>
+
+        <div class="footer__col">
+          <h3>Links</h3>
+          <ul class="reflist">
+            <li><a href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">Source on GitHub ↗</a></li>
+            <li><a href="https://github.com/KevinBian107/engram/blob/master/plan/MANIFESTO.md" target="_blank" rel="noopener">Read the Manifesto ↗</a></li>
+            <li><a href="https://kbian.org" target="_blank" rel="noopener">Kaiwen Bian ↗</a></li>
+            <li><a href="https://kbian.org/logger-website/" target="_blank" rel="noopener">log(ger) — a sibling local-first tool ↗</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer__fine">
+        This site shows conceptual mockups of the app, not screen recordings. Engram is an
+        independent research prototype and is not affiliated with Microsoft, Obsidian, or any
+        model provider.
+      </p>
+    </footer>
+  </main>
+
+  <script src="graph.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
