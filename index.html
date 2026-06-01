@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Engram — your handwritten notes, as a knowledge graph</title>
-  <meta name="description" content="Engram turns a Microsoft OneNote notebook (exported as PDF) into a local, Obsidian-native Markdown vault on your Mac — faithful per-note summaries written by a local vision model, organized as a hierarchy that is also a graph." />
+  <meta name="description" content="Engram turns Microsoft OneNote courses (exported as PDF) into an Obsidian-native index on your Mac — searchable summaries of each page's key ideas and formulas, noise filtered out, organized as a hierarchy that is also a multi-layer concept graph." />
   <meta name="color-scheme" content="light" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Engram — your handwritten notes, as a knowledge graph" />
-  <meta property="og:description" content="OneNote PDF export → local-VLM summaries → an Obsidian vault that is a hierarchy and a graph. Local-first, incremental, macOS-native." />
+  <meta property="og:description" content="OneNote PDF export → a searchable index of key ideas + formulas (noise filtered) → an Obsidian vault that is a hierarchy and a multi-layer concept graph. Claude Code or local, macOS-native." />
   <meta property="og:type" content="website" />
 
   <link rel="icon" href="assets/engram_logo.svg" type="image/svg+xml" />
@@ -38,16 +38,17 @@
   <main id="top">
     <section class="hero">
       <div class="hero__inner">
-        <p class="hero__eyebrow">macOS · local vision model · incremental</p>
+        <p class="hero__eyebrow">macOS · indexes the knowledge · concept graph</p>
         <h1 class="hero__title">Your handwritten notes,<br /><span class="grad">as a knowledge graph.</span></h1>
         <p class="hero__lede">
-          <strong>Engram</strong> turns Microsoft OneNote courses — exported as per-section-group PDFs
-          and grouped into a <em>domain</em> — into a local,
+          <strong>Engram</strong> turns Microsoft OneNote courses — exported per section group and
+          grouped into a <em>domain</em> — into an
           <a href="https://obsidian.md" target="_blank" rel="noopener">Obsidian</a>-native Markdown
-          vault on your Mac. A <em>local</em> vision-language model reads every page (handwriting,
-          typed text, diagrams, code, papers) and writes a faithful summary above the original page.
-          Holistic passes then link related notes and distil a multi-layer concept map — so your vault is
-          <strong>a hierarchy that is also a graph.</strong>
+          vault on your Mac. It's an <strong>index, not a transcription</strong>: a vision model
+          distills each page into a concise, searchable summary of its <strong>key ideas and
+          formulas</strong> (the original page sits right below), and it <strong>skips the noise</strong>
+          — attached papers, homeworks, long code. Holistic passes then link related notes and distil a
+          multi-layer concept map — so your vault is <strong>a searchable index that is also a graph.</strong>
         </p>
 
         <div class="hero__badges">
@@ -159,9 +160,10 @@
       <div class="section__head reveal">
         <h2>How a page becomes a note</h2>
         <p class="section__sub">
-          Each note keeps its original page as a faithful per-note PDF <strong>leaf</strong>; the
-          summary is a navigable projection written above it — always one scroll from the ink.
-          Nothing is invented: typed text is preserved, handwriting is read, illegible parts are flagged.
+          Each note keeps its original page as a faithful per-note PDF <strong>leaf</strong>; above it
+          sits a concise, searchable <strong>index entry</strong> — the page's key ideas and all its
+          formulas — always one scroll from the original. Engram indexes the knowledge, not the page:
+          nothing is invented, illegible parts are flagged, and papers / homeworks / long code are skipped.
         </p>
       </div>
 
@@ -212,7 +214,7 @@
       <ol class="stages reveal">
         <li><span class="stages__n">1</span><b>Parse</b><span>PDF → notes; recover Domain → Section group → Section → Note from the text layer <em>(PyMuPDF, no model)</em>.</span></li>
         <li><span class="stages__n">2</span><b>Leaf</b><span>Split each note's original page(s) into a faithful per-note PDF + page images.</span></li>
-        <li><span class="stages__n">3</span><b>Summarize</b><span>A local vision model writes hierarchical Markdown — headings, LaTeX, code. Long code &amp; paper printouts get a concise summary, flagged with their own kind.</span></li>
+        <li><span class="stages__n">3</span><b>Index</b><span>A vision model (Claude Code or local) writes a concise, searchable summary — key ideas + <em>all formulas</em> (LaTeX) — not a transcription. Papers, homeworks &amp; long code notebooks are filtered out.</span></li>
         <li><span class="stages__n">4</span><b>Roll-up</b><span>Section · section-group · domain overview notes (MOCs) wikilink the tree.</span></li>
         <li><span class="stages__n">5</span><b>Vault</b><span>Idempotent write: <code>&lt;Domain&gt;/&lt;SectionGroup&gt;/&lt;Section&gt;/&lt;Title&gt;.md</code> beside <code>.pdf</code>.</span></li>
         <li><span class="stages__n">6</span><b>Link</b><span>Holistic domain-wide pass adds <code>## Related</code> wikilinks — even across section groups.</span></li>
@@ -229,14 +231,14 @@
 
       <div class="features">
         <article class="feat reveal">
-          <div class="feat__ic">🔒</div>
-          <h3>Local-first</h3>
-          <p>Reading your pages — the heavy step — runs <strong>on-device</strong> via <a href="https://github.com/Blaizzy/mlx-vlm" target="_blank" rel="noopener">mlx-vlm</a> (Qwen2.5-VL on Apple Silicon): no upload, no API key. The optional concept-map / cross-link pass uses a stronger model through your <strong>Claude Code login</strong> (note summaries only — never the raw pages).</p>
+          <div class="feat__ic">🎛️</div>
+          <h3>Your choice of model</h3>
+          <p>Pick the reader in Settings: <strong>Claude Code</strong> (vision, via your login — best quality, default) or a <strong>local</strong> <a href="https://github.com/Blaizzy/mlx-vlm" target="_blank" rel="noopener">Qwen2.5-VL</a> 7B/32B, fully on-device. The concept-map &amp; cross-link reasoning runs through Claude Code too — all from a dropdown, no code.</p>
         </article>
         <article class="feat reveal">
-          <div class="feat__ic">🪶</div>
-          <h3>Faithful, not inventive</h3>
-          <p>The raw page is the source of truth and is embedded in every note. Summaries reproduce what's on the page; illegible parts are flagged. A clean-reading but hallucinated summary is treated as a bug.</p>
+          <div class="feat__ic">🎯</div>
+          <h3>An index, not an archive</h3>
+          <p>Engram distills each note to a searchable digest of its <strong>key ideas and all formulas</strong> — so you can find and reconnect, then jump to the original page (the source of truth, embedded in every note). It <strong>filters out noise</strong> — attached papers, homeworks, long code — and never invents; illegible parts are flagged.</p>
         </article>
         <article class="feat reveal">
           <div class="feat__ic">🕸️</div>
@@ -315,11 +317,11 @@ uv run python -m engram status</code></pre>
           <h3>✓ Works today</h3>
           <ul>
             <li>Domains: many section-group PDFs as one knowledge base</li>
-            <li>Local-VLM summaries (LaTeX + code; concise for code/papers)</li>
-            <li>Obsidian vault: wikilinks, overviews, embedded PDFs</li>
+            <li>Searchable index entries — key ideas + all formulas (LaTeX)</li>
+            <li>Filters out papers, homeworks &amp; long code notebooks</li>
+            <li>Model picker: Claude Code (vision) or local Qwen2.5-VL 7B/32B</li>
             <li>Domain-wide cross-links + a multi-layer concept graph</li>
-            <li>Incremental rebuilds, per section group, with a change report</li>
-            <li>CLI + a native macOS app</li>
+            <li>Incremental rebuilds + a native macOS app</li>
           </ul>
         </div>
         <div class="statuscol statuscol--soon">
