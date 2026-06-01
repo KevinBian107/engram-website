@@ -3,9 +3,10 @@
 
    A force-directed simulation that mirrors the real app's GraphEngine
    (macapp/Sources/Engram/GraphEngine.swift): node-node repulsion, edge
-   springs, gravity toward origin, velocity damping. Abstracted into the
-   project's conceptual layers: Domain (notebook) → Concept (section) →
-   .md (note), with solid hierarchy edges and dashed cross-links.
+   springs, gravity toward origin, velocity damping — plus a same-cluster pull
+   so nodes clump by their parent theme. Mirrors the app's multi-layer concept
+   graph: Theme → Concept → note, colored by cluster, with solid co-occurrence
+   edges and dashed knowledge cross-links.
 
    Interaction matches the app: drag a node; click one to highlight its
    neighborhood and dim the rest (incident edges turn blue).
@@ -23,38 +24,44 @@
   const INK = "#14171a", BLUE = "#3b6ea5", ORANGE = "#e07a3a";
   const NOTE_FILL = "#dbe3ec", NOTE_STROKE = "#aebccd";
 
-  // ---- the conceptual graph: 1 domain, 3 concepts, 9 notes ----
-  // kind: domain | concept | note
+  // ---- the concept graph: 2 clusters (themes) → concepts → notes ----
+  // Mirrors the app's multi-layer concept graph: nodes are colored by their
+  // cluster (parent theme), with a gentle same-cluster pull so they clump.
+  // kind: theme | concept | note ; cluster: AI | SYS
   const N = [
-    { t: "Domain",     kind: "domain"  }, // 0
-    { t: "Concept · A", kind: "concept" }, // 1
-    { t: "Concept · B", kind: "concept" }, // 2
-    { t: "Concept · C", kind: "concept" }, // 3
-    { t: "a1.md", kind: "note" }, // 4
-    { t: "a2.md", kind: "note" }, // 5
-    { t: "a3.md", kind: "note" }, // 6
-    { t: "b1.md", kind: "note" }, // 7
-    { t: "b2.md", kind: "note" }, // 8
-    { t: "b3.md", kind: "note" }, // 9
-    { t: "c1.md", kind: "note" }, // 10
-    { t: "c2.md", kind: "note" }, // 11
-    { t: "c3.md", kind: "note" }, // 12
+    { t: "AI & Decision-Making", kind: "theme",   cluster: "AI"  }, // 0
+    { t: "ML Systems",           kind: "theme",   cluster: "SYS" }, // 1
+    { t: "Search",       kind: "concept", cluster: "AI"  }, // 2
+    { t: "MDP & RL",     kind: "concept", cluster: "AI"  }, // 3
+    { t: "MCTS",         kind: "concept", cluster: "AI"  }, // 4
+    { t: "Matmul",       kind: "concept", cluster: "SYS" }, // 5
+    { t: "Parallelism",  kind: "concept", cluster: "SYS" }, // 6
+    { t: "Memory Opt",   kind: "concept", cluster: "SYS" }, // 7
+    { t: "", kind: "note", cluster: "AI"  }, // 8  Search
+    { t: "", kind: "note", cluster: "AI"  }, // 9  Search
+    { t: "", kind: "note", cluster: "AI"  }, // 10 MDP & RL
+    { t: "", kind: "note", cluster: "AI"  }, // 11 MDP & RL
+    { t: "", kind: "note", cluster: "AI"  }, // 12 MCTS
+    { t: "", kind: "note", cluster: "AI"  }, // 13 MCTS
+    { t: "", kind: "note", cluster: "SYS" }, // 14 Matmul
+    { t: "", kind: "note", cluster: "SYS" }, // 15 Parallelism
+    { t: "", kind: "note", cluster: "SYS" }, // 16 Parallelism
+    { t: "", kind: "note", cluster: "SYS" }, // 17 Memory Opt
   ];
 
-  // hierarchy edges (solid) ...
+  // hierarchy edges (solid): theme → concepts, concept → its notes
   const HIER = [
-    [0, 1], [0, 2], [0, 3],
-    [1, 4], [1, 5], [1, 6],
-    [2, 7], [2, 8], [2, 9],
-    [3, 10], [3, 11], [3, 12],
+    [0, 2], [0, 3], [0, 4],
+    [1, 5], [1, 6], [1, 7],
+    [2, 8], [2, 9], [3, 10], [3, 11], [4, 12], [4, 13],
+    [5, 14], [6, 15], [6, 16], [7, 17],
   ];
-  // ... and cross-links (dashed orange), added by the linking pass.
+  // knowledge cross-links (dashed): related concepts — even across clusters
   const CROSS = [
-    [4, 7],   // shared concept
-    [6, 10],  // prerequisite
-    [8, 11],  // variation
-    [5, 9],   // related idea
-    [6, 12],
+    [2, 4],   // Search ↔ MCTS
+    [3, 4],   // MDP & RL ↔ MCTS
+    [5, 6],   // Matmul ↔ Parallelism
+    [6, 7],   // Parallelism ↔ Memory Opt
   ];
   const EDGES = HIER.map(e => ({ a: e[0], b: e[1], cross: false }))
     .concat(CROSS.map(e => ({ a: e[0], b: e[1], cross: true })));
@@ -70,13 +77,19 @@
     return { x: 220 * Math.cos(a), y: 220 * Math.sin(a), vx: 0, vy: 0, pinned: false, ...n };
   });
 
+  // cluster (theme) colors — nodes are tinted by their parent cluster.
+  const CLUSTER = {
+    AI:  { main: "#3b6ea5", light: "rgba(59,110,165,0.34)" },
+    SYS: { main: "#2f8f6b", light: "rgba(47,143,107,0.34)" },
+  };
   function radius(i) {
-    const base = nodes[i].kind === "domain" ? 14 : nodes[i].kind === "concept" ? 10 : 7;
-    return base + Math.min(degree[i], 10) * 1.2;
+    const base = nodes[i].kind === "theme" ? 14 : nodes[i].kind === "concept" ? 10 : 6;
+    return base + Math.min(degree[i], 10) * 1.1;
   }
   function fill(i, dim) {
     if (dim) return "rgba(150,160,170,0.22)";
-    return nodes[i].kind === "domain" ? INK : nodes[i].kind === "concept" ? BLUE : NOTE_FILL;
+    const c = CLUSTER[nodes[i].cluster] || { main: "#777", light: "rgba(120,120,120,0.3)" };
+    return nodes[i].kind === "note" ? c.light : c.main;
   }
 
   // ---- view transform ----
@@ -117,6 +130,21 @@
       const f = SPRING_K * (d - SPRING_LEN), ux = dx / d, uy = dy / d;
       fx[e.a] += f * ux; fy[e.a] += f * uy;
       fx[e.b] -= f * ux; fy[e.b] -= f * uy;
+    }
+    // clustering: pull same-cluster nodes toward their centroid (clusterish)
+    const cx = {}, cy = {}, cc = {};
+    for (let i = 0; i < n; i++) {
+      const c = nodes[i].cluster;
+      cx[c] = (cx[c] || 0) + nodes[i].x; cy[c] = (cy[c] || 0) + nodes[i].y;
+      cc[c] = (cc[c] || 0) + 1;
+    }
+    const CLUSTER_K = 0.045;
+    for (let i = 0; i < n; i++) {
+      const c = nodes[i].cluster;
+      if (cc[c] > 1) {
+        fx[i] += (cx[c] / cc[c] - nodes[i].x) * CLUSTER_K;
+        fy[i] += (cy[c] / cc[c] - nodes[i].y) * CLUSTER_K;
+      }
     }
     // gravity + integrate
     for (let i = 0; i < n; i++) {
@@ -170,7 +198,7 @@
 
       // labels
       if (scale > 0.45) {
-        ctx.font = `${nodes[i].kind === "note" ? 500 : 600} ${nodes[i].kind === "domain" ? 13 : 11}px ui-monospace, "SF Mono", Menlo, monospace`;
+        ctx.font = `${nodes[i].kind === "note" ? 500 : 600} ${nodes[i].kind === "theme" ? 13 : 11}px ui-monospace, "SF Mono", Menlo, monospace`;
         ctx.textAlign = "center";
         ctx.fillStyle = dim ? "rgba(20,23,26,0.22)" : "#14171a";
         ctx.fillText(nodes[i].t, p.x, p.y - r - 6);

@@ -208,7 +208,9 @@ code {
 .tline { padding: .12rem 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tind1 { padding-left: 1.1rem; }
 .tind2 { padding-left: 2.2rem; }
+.tind3 { padding-left: 3.3rem; }
 .tnode { font-weight: 600; }
+.tnode em { font-style: normal; font-weight: 400; opacity: .55; font-size: .85em; }
 .tnode--dom { color: var(--ink); }
 .tnode--sec { color: var(--blue-ink); }
 .tnode--md  { color: var(--ink-soft); font-weight: 500; }
