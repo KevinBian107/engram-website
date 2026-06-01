@@ -37,6 +37,7 @@
       <a href="#crosslinks">Cross-links</a>
       <a href="#graph">Concept graph</a>
       <a href="#crossnotebook">Cross-notebook graphs</a>
+      <a href="#chat">Chat — query &amp; synthesis</a>
       <a href="#app">The Mac app</a>
       <h4>Reference</h4>
       <a href="#cli">CLI reference</a>
@@ -212,16 +213,50 @@ cd macapp &amp;&amp; ./build_app.sh &amp;&amp; open Engram.app   <span class="cm
         In the brain builder, just check 2+ notebooks; on the CLI, pass more than one domain:
       </p>
       <pre><code>uv run python -m engram concepts "Data Science" "Mathematics" --layers 3</code></pre>
-      <p>Combined maps are stored under <code>~/Engram/_concept_maps/&lt;A + B&gt;/</code>; clicking a concept opens its note even if it lives in the other notebook.</p>
+      <p>Combined maps are stored under <code>~/Engram/_concept_maps/&lt;A + B&gt;/</code>; clicking a concept opens its note even if it lives in the other notebook. A combined map is <strong>shared</strong> — it opens from <em>either</em> member notebook's entrance, and a switcher lets you flip between a notebook's own map and any shared one.</p>
+
+      <!-- CHAT -->
+      <h2 id="chat">Chat — query &amp; synthesis</h2>
+      <p>
+        Once a concept graph exists, you can <strong>chat with your knowledge base</strong>. Context is
+        pulled <strong>deterministically from the graph and your notes</strong> (no embeddings) and the
+        answer is <strong>grounded and cited</strong> — it links the notes it drew on as
+        <code>[[wikilinks]]</code> (shown as clickable <em>Sources</em>), and anything the model adds
+        beyond your notes is put under a clearly-marked <strong>"Beyond your notes"</strong> section.
+        Two modes:
+      </p>
+      <table class="docs-table">
+        <tr><th>Mode</th><th>For</th><th>Context it sees</th></tr>
+        <tr><td><strong>Query</strong></td><td>a specific question about one <em>course</em> or one <em>concept</em></td><td>that concept's notes + its graph neighbours (or all of a course's note summaries)</td></tr>
+        <tr><td><strong>Synthesis</strong></td><td>a big-picture question about a whole <em>field</em></td><td>the concept graph + overview MOCs + the field's note summaries (budgeted, most-central first)</td></tr>
+      </table>
+      <p>
+        In the app: the <strong>Chat</strong> toolbar button opens it with <strong>Query / Synthesis</strong>
+        tabs; you can also click a node in the graph and pick <strong>"Ask about this"</strong> to chat
+        about that concept. The chat model defaults to <strong>Claude</strong> and is switchable in Settings.
+      </p>
+      <pre><code><span class="cmt"># ask about one concept, or one course</span>
+uv run python -m engram chat query "Data Science" "How does value iteration converge?" --concept "Markov Decision Processes"
+uv run python -m engram chat query "Data Science" "Give me an exam cheat-sheet" --course "DSC 120"
+
+<span class="cmt"># a big question about a whole field (one or more notebooks)</span>
+uv run python -m engram chat synthesis "Mathematics" -q "What's the unifying story, and what's missing?"</code></pre>
+      <div class="callout callout--warn">
+        <div class="callout__title">What chat can and can't reach</div>
+        Chat answers using your notes plus the <strong>model's own knowledge</strong> (which, depending on
+        the model, may include general/world knowledge). It does <strong>not</strong> browse the internet or
+        use external (MCP) tools yet — that's planned for a later version.
+      </div>
 
       <!-- APP -->
       <h2 id="app">The Mac app</h2>
       <ul>
         <li><strong>Sidebar:</strong> domains → section-group folders → sections → notes (folded by default).</li>
         <li><strong>Note view:</strong> the Markdown summary with <strong>LaTeX math + code rendered</strong> (KaTeX), beside the original-page PDF.</li>
-        <li><strong>Add / Link / Concepts / Graph / Settings</strong> in the toolbar.</li>
-        <li><strong>Settings (gear):</strong> model dropdowns (transcription + concept), filter toggles, Claude Code status.</li>
-        <li><strong>Graph:</strong> the multi-layer concept graph with granularity tabs; click a node for its notes.</li>
+        <li><strong>Add / Link / Concepts / Graph / Chat / Settings</strong> in the toolbar.</li>
+        <li><strong>Settings (gear):</strong> model dropdowns (transcription + concept + chat), filter toggles, Claude Code status.</li>
+        <li><strong>Graph:</strong> the multi-layer concept graph with granularity tabs; click a node for its notes — or to chat about it.</li>
+        <li><strong>Chat:</strong> Query / Synthesis modes with grounded, cited answers (enabled once a concept graph exists).</li>
       </ul>
       <pre><code>cd macapp &amp;&amp; ./build_app.sh &amp;&amp; open Engram.app</code></pre>
 
@@ -241,10 +276,14 @@ engram link "Data Science"
 <span class="cmt"># multi-layer concept map (1 domain, or several for cross-notebook)</span>
 engram concepts "Data Science" ["Mathematics"] [--layers 3]
 
+<span class="cmt"># chat (needs a concept graph): query a course/concept, or synthesise a field</span>
+engram chat query "Data Science" "…question…" (--concept "…" | --course "…")
+engram chat synthesis "Mathematics" ["Data Science"] -q "…big question…"
+
 <span class="cmt"># inspect structure (no model) / status / config</span>
 engram inspect "CSE 234.pdf"
 engram status
-engram config set transcribe claude-code      <span class="cmt"># transcribe / reasoning_model / skip_* / vault_path</span>
+engram config set transcribe claude-code      <span class="cmt"># transcribe / reasoning_model / chat_model / skip_* / vault_path</span>
 engram config set-key sk-ant-…                 <span class="cmt"># optional Claude API key</span></code></pre>
       <p style="color:var(--muted); font-size:.9rem">
         Run as <code>uv run python -m engram …</code> from the repo root.
