@@ -26,6 +26,7 @@
     <nav class="nav__links" aria-label="Section navigation">
       <a href="#what">What it is</a>
       <a href="#graph">Knowledge graph</a>
+      <a href="#chat">Chat</a>
       <a href="#pipeline">How it works</a>
       <a href="#features">Features</a>
       <a href="#start">Get started</a>
@@ -38,8 +39,8 @@
   <main id="top">
     <section class="hero">
       <div class="hero__inner">
-        <p class="hero__eyebrow">macOS · indexes the knowledge · concept graph</p>
-        <h1 class="hero__title">Your handwritten notes,<br /><span class="grad">as a knowledge graph.</span></h1>
+        <p class="hero__eyebrow">macOS · indexes the knowledge · concept graph · chat</p>
+        <h1 class="hero__title">Your handwritten notes,<br /><span class="grad">a knowledge graph you can talk to.</span></h1>
         <p class="hero__lede">
           <strong>Engram</strong> turns Microsoft OneNote courses — exported per section group and
           grouped into a <em>domain</em> — into an
@@ -47,8 +48,9 @@
           vault on your Mac. It's an <strong>index, not a transcription</strong>: a vision model
           distills each page into a concise, searchable summary of its <strong>key ideas and
           formulas</strong> (the original page sits right below), and it <strong>skips the noise</strong>
-          — attached papers, homeworks, long code. Holistic passes then link related notes and distil a
-          multi-layer concept map — so your vault is <strong>a searchable index that is also a graph.</strong>
+          — attached papers, homeworks, long code. Holistic passes link related notes and distil a
+          multi-layer concept map, and now you can <strong>chat with it</strong> — ask about a course or
+          concept, or synthesise a whole field, with answers <strong>grounded in your notes and cited.</strong>
         </p>
 
         <div class="hero__badges">
@@ -73,7 +75,7 @@
       <div class="protobar" role="note">
         <span class="protobar__tag">PROTOTYPE</span>
         <span>
-          This is a very early <strong>v0.1</strong> prototype. So far it only ingests
+          This is an early <strong>v0.2</strong> prototype (v0.2 adds <strong>chat</strong>). It ingests
           <strong>Microsoft OneNote notebooks exported as PDF</strong>, and runs on
           <strong>macOS&nbsp;14+ (Apple&nbsp;Silicon)</strong>. See
           <a href="#status">prototype status</a> for what is and isn't validated yet.
@@ -219,7 +221,61 @@
         <li><span class="stages__n">5</span><b>Vault</b><span>Idempotent write: <code>&lt;Domain&gt;/&lt;SectionGroup&gt;/&lt;Section&gt;/&lt;Title&gt;.md</code> beside <code>.pdf</code>.</span></li>
         <li><span class="stages__n">6</span><b>Link</b><span>Holistic domain-wide pass adds <code>## Related</code> wikilinks — even across section groups.</span></li>
         <li><span class="stages__n">7</span><b>Concepts</b><span>A multi-layer concept map (Concepts → Themes → Areas) — the graph view.</span></li>
+        <li><span class="stages__n">8</span><b>Chat</b><span><em>v0.2</em> — once the graph exists, <b>query</b> a course/concept or <b>synthesise</b> a field; answers are grounded in your notes and cited.</span></li>
       </ol>
+    </section>
+
+    <!-- ======================= CHAT (v0.2) ======================= -->
+    <section class="section section--chat" id="chat">
+      <div class="section__head reveal">
+        <span class="tagpill">New in v0.2</span>
+        <h2>Talk to your knowledge base</h2>
+        <p class="section__sub">
+          Once the concept graph exists, you can <strong>chat with your notes</strong>. Context is pulled
+          deterministically from the graph and your summaries — no embeddings — and every answer is
+          <strong>grounded and cited</strong> (the notes it used become clickable sources), with anything
+          <strong>beyond your notes</strong> clearly marked. Two modes: <strong>Query</strong> a single
+          course or concept, or <strong>Synthesise</strong> a whole field.
+        </p>
+      </div>
+
+      <div class="chatwrap reveal">
+        <!-- animated mock chat -->
+        <figure class="chatdemo" aria-label="Mock chat: a grounded, cited answer">
+          <div class="chatdemo__bar">
+            <span class="chatdemo__mode chatdemo__mode--on">💬 Query</span>
+            <span class="chatdemo__mode">✦ Synthesis</span>
+            <span class="chatdemo__scope">Concept: Markov Decision Processes</span>
+          </div>
+          <div class="chatdemo__body">
+            <div class="cmsg cmsg--user"><p>How does value iteration converge, and why?</p></div>
+            <div class="cmsg cmsg--ai">
+              <p class="cmsg__think">Thinking…</p>
+              <div class="cmsg__ans">
+                <p>Value iteration converges because the Bellman operator is a
+                   <strong>γ-contraction</strong> in the sup-norm:</p>
+                <p class="cmath">‖ℬV − ℬV′‖<sub>∞</sub> ≤ γ‖V − V′‖<sub>∞</sub>,&nbsp; γ &lt; 1</p>
+                <p>so the value estimates form a Cauchy sequence with a unique fixed point
+                   <em>V*</em> — geometric convergence from any start.</p>
+                <div class="cmsg__cites">
+                  <span class="cmsg__cl">Sources</span>
+                  <span class="cchip">📄 Walking in Value Space</span>
+                  <span class="cchip">📄 “Singularity”</span>
+                </div>
+                <p class="cmsg__beyond">▸ Beyond your notes — next: asynchronous / prioritized sweeping, sample-based VI.</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <ul class="chatfeat">
+          <li><b>Grounded &amp; cited</b><span>Answers prefer what your notes say and link them as clickable <code>[[sources]]</code>.</span></li>
+          <li><b>Marked extensions</b><span>Anything the model adds beyond your notes goes under a clear <em>“Beyond your notes”</em> line — never disguised.</span></li>
+          <li><b>Query vs Synthesis</b><span>Local questions about a concept/course, or big-picture questions across a whole field.</span></li>
+          <li><b>Your choice of model</b><span>Defaults to <strong>Claude</strong> (via your Claude Code login); switch models in Settings.</span></li>
+          <li><b>No internet yet</b><span>Uses the model's own knowledge — it can't browse the web or use external (MCP) tools <em>yet</em>.</span></li>
+        </ul>
+      </div>
     </section>
 
     <!-- ======================= FEATURES ======================= -->
@@ -311,9 +367,9 @@ uv run python -m engram status</code></pre>
       <div class="section__head reveal">
         <h2>Prototype status — the honest part</h2>
         <p class="section__sub">
-          Engram's whole ethos is honesty over polish. This is a working v0.1 validated end-to-end
-          on a real notebook (18 notes, 73 links) — but it's early, and several things are heuristic
-          or not yet field-validated.
+          Engram's whole ethos is honesty over polish. This is a working <strong>v0.2</strong>, run
+          end-to-end on real multi-course domains (and v0.1 validated on a known notebook of 18 notes,
+          73 links) — but it's early, and several things are heuristic or not yet field-validated.
         </p>
       </div>
 
@@ -325,7 +381,8 @@ uv run python -m engram status</code></pre>
             <li>Searchable index entries — key ideas + all formulas (LaTeX)</li>
             <li>Filters out papers, homeworks &amp; long code notebooks</li>
             <li>Model picker: Claude Code (vision) or local Qwen2.5-VL 7B/32B</li>
-            <li>Domain-wide cross-links + a multi-layer concept graph</li>
+            <li>Domain-wide cross-links + a multi-layer concept graph (shared across notebooks)</li>
+            <li><strong>Chat (v0.2):</strong> grounded, cited query &amp; synthesis</li>
             <li>Incremental rebuilds + a native macOS app</li>
           </ul>
         </div>
@@ -335,7 +392,8 @@ uv run python -m engram status</code></pre>
             <li><strong>OneNote PDF export only</strong> — no other capture sources yet</li>
             <li><strong>macOS 14+ on Apple Silicon</strong> (~16&nbsp;GB RAM for the 7B model)</li>
             <li>Structure parsing is heuristic &amp; locale-dependent (needs an English fallback)</li>
-            <li>Concept-map / cross-link reasoning runs through your Claude Code login</li>
+            <li>Concept / cross-link / chat reasoning runs through your Claude Code login</li>
+            <li><strong>Chat has no internet / MCP tools yet</strong> — model's own knowledge only</li>
             <li>Re-exports aren't pixel-stable, so re-added notes read as "modified"</li>
             <li>One-way only (OneNote → vault); never written back</li>
           </ul>
