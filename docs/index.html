@@ -4,7 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Engram — Documentation</title>
-  <meta name="description" content="Engram documentation: how to turn OneNote courses into a searchable, Obsidian-native index — features, models, filters, the concept graph, the Mac app, and the CLI. Start with one section group." />
+  <meta name="description" content="Engram documentation hub: an overview of every toolbar action, each linking to its own page — ingesting notes, connecting them into a graph, chatting, and the full reference." />
+  <meta name="color-scheme" content="light dark" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('engram-theme');
+        if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
   <link rel="icon" href="../assets/engram_logo.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="docs.css" />
@@ -18,309 +27,153 @@
     <span class="docs-top__spacer"></span>
     <a class="docs-top__link" href="../index.html">Home</a>
     <a class="docs-top__link" href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">GitHub ↗</a>
+    <button class="nav__theme" id="theme-toggle" type="button"
+            aria-label="Toggle light / dark theme" title="Toggle light / dark theme">
+      <span class="nav__theme-icon" aria-hidden="true">🌙</span>
+    </button>
   </header>
 
   <div class="docs-wrap">
-    <!-- ===================== SIDEBAR ===================== -->
     <aside class="docs-side">
-      <h4>Start here</h4>
-      <a href="#overview">Overview</a>
-      <a href="#recommended">Recommended start ★</a>
-      <a href="#install">Install &amp; requirements</a>
-      <h4>Concepts</h4>
-      <a href="#model">How notes are organized</a>
-      <a href="#export">Getting notes out of OneNote</a>
-      <a href="#index">An index, not a transcription</a>
-      <h4>Ingest &amp; filter</h4>
-      <a href="#models">Transcription models</a>
-      <a href="#filters">Filters</a>
-      <h4>Connect &amp; explore</h4>
-      <a href="#crosslinks">Cross-links</a>
-      <a href="#graph">Concept graph</a>
-      <a href="#crossnotebook">Cross-notebook graphs</a>
-      <a href="#chat">Chat — query &amp; synthesis</a>
-      <h4>App &amp; reference</h4>
-      <a href="#app">The Mac app</a>
-      <a href="#cli">CLI reference</a>
-      <a href="#limits">Honest limitations</a>
+      <h4>Documentation</h4>
+      <a class="pagelink active" href="index.html">Overview</a>
+      <a class="pagelink" href="using.html">Using Engram</a>
+      <a class="pagelink" href="connect.html">Connecting knowledge</a>
+      <a class="pagelink" href="reference.html">Reference</a>
+      <h4 class="onthispage">On this page</h4>
+      <a href="#overview">What Engram is</a>
+      <a href="#toolbar">The toolbar</a>
+      <a href="#install">Install</a>
+      <a href="#start">Recommended start ★</a>
     </aside>
 
-    <!-- ===================== CONTENT ===================== -->
     <main class="docs-main">
       <h1>Engram documentation</h1>
       <p class="docs-lede">
-        Engram turns Microsoft OneNote courses (exported as PDF) into a local,
-        <a href="https://obsidian.md" target="_blank" rel="noopener">Obsidian</a>-native
-        <strong>index of your knowledge</strong> — searchable summaries of each page's key
-        ideas and formulas, organized as a hierarchy that is also a concept graph.
+        Engram turns your handwritten notes — a OneNote export, or <strong>any PDF</strong> — into a
+        local, <a href="https://obsidian.md" target="_blank" rel="noopener">Obsidian</a>-native
+        knowledge base. It's an <strong>organizer for what you've already learned</strong>: searchable
+        summaries, connected into a concept graph, that show you the shape of what you know.
       </p>
 
-      <!-- OVERVIEW -->
-      <h2 id="overview">Overview</h2>
+      <h2 id="overview">What Engram is</h2>
       <p>
-        Engram is an <strong>index and connector</strong>, not a transcriber. For each note it
-        writes a concise, searchable summary of the page's <strong>key ideas and all its
-        formulas</strong>, and keeps the original page right below as the source of truth. It then
-        links related notes and distils a multi-layer <strong>concept graph</strong> — so you can
-        find an idea, see what it connects to, and jump back to the page.
+        An <strong>index and connector</strong>, not a transcriber. For each note it writes a concise,
+        searchable summary of the page's <strong>key ideas and all its formulas</strong>, keeps the
+        original page right below as the source of truth, links related notes, and distils a
+        multi-layer <strong>concept graph</strong>. Everything runs on your Mac (Claude Code or a local
+        model), and edits are durable and incremental.
       </p>
-      <ul>
-        <li><strong>Local-first or Claude</strong> — read pages with the on-device model or with Claude Code.</li>
-        <li><strong>Focused</strong> — it filters out noise (papers, homeworks, long code notebooks).</li>
-        <li><strong>Obsidian-native</strong> — plain Markdown + embedded PDFs + <code>[[wikilinks]]</code>.</li>
-        <li><strong>Incremental</strong> — re-add a course and only changed notes are re-processed.</li>
-      </ul>
 
-      <!-- RECOMMENDED START -->
-      <h2 id="recommended">Recommended start ★</h2>
-      <div class="callout callout--start">
-        <div class="callout__title">🚀 Don't import everything at once — start with one section group (one class).</div>
-        <p style="margin:.3em 0 0">
-          Bringing in your whole library on day one means committing hours of model time before you
-          know whether the summaries, model, and filters are right for you. <strong>Try one course
-          first</strong>, look at the results, then scale.
-        </p>
-      </div>
-      <ol class="steps">
-        <li><strong>Export one course</strong> to PDF (one section group — see
-          <a href="#export">Getting notes out</a>) and put the <code>.pdf</code> on your Mac.</li>
-        <li><strong>Add it</strong> to a domain (the domain is auto-created):
-          <pre><code>uv run python -m engram add "Data Science" "CSE 234.pdf"</code></pre></li>
-        <li><strong>Open the Mac app</strong> and read a few notes — are the summaries capturing the
-          right ideas and formulas? Is anything you care about getting skipped?</li>
-        <li><strong>Tune in Settings (gear):</strong> pick the <a href="#models">transcription
-          model</a> (Claude Code = best; local 7B = fast/offline) and adjust the
-          <a href="#filters">filters</a>.</li>
-        <li><strong>Happy? Add the rest</strong> of your courses, then build the graph:
-          <pre><code>uv run python -m engram link "Data Science"
-uv run python -m engram concepts "Data Science" --layers 3</code></pre></li>
-      </ol>
-      <div class="callout callout--tip">
-        <div class="callout__title">Why one course first</div>
-        It's the cheapest way to (a) judge summary quality, (b) decide between Claude Code and a
-        local model, (c) confirm the filters skip what you expect, and (d) — if you use Claude Code —
-        see how it behaves before a few-hundred-note batch risks hitting rate limits.
+      <h2 id="toolbar">The toolbar — start here</h2>
+      <p>Every action in the app lives in the top toolbar. Click an icon below to read how it works and
+        why it's designed that way.</p>
+      <div class="icongrid">
+        <a class="iconcard" href="using.html#add">
+          <div class="iconcard__top"><span class="iconcard__glyph">➕</span><span class="iconcard__name">Add</span></div>
+          <p>Import a course PDF, or add any single PDF as one note.</p>
+          <span class="iconcard__more">Read more →</span>
+        </a>
+        <a class="iconcard" href="using.html#edit">
+          <div class="iconcard__top"><span class="iconcard__glyph">✏️</span><span class="iconcard__name">Edit a note</span></div>
+          <p>Right-click to delete, move, rename, duplicate, or re-transcribe.</p>
+          <span class="iconcard__more">Read more →</span>
+        </a>
+        <a class="iconcard" href="connect.html#link">
+          <div class="iconcard__top"><span class="iconcard__glyph">🔗</span><span class="iconcard__name">Link</span></div>
+          <p>Cross-link related notes across the whole domain.</p>
+          <span class="iconcard__more">Read more →</span>
+        </a>
+        <a class="iconcard" href="connect.html#concepts">
+          <div class="iconcard__top"><span class="iconcard__glyph">🧠</span><span class="iconcard__name">Concepts</span></div>
+          <p>Build the multi-layer concept graph.</p>
+          <span class="iconcard__more">Read more →</span>
+        </a>
+        <a class="iconcard" href="connect.html#graph">
+          <div class="iconcard__top"><span class="iconcard__glyph">🕸️</span><span class="iconcard__name">Graph</span></div>
+          <p>Explore the interactive graph; drill Areas → Themes.</p>
+          <span class="iconcard__more">Read more →</span>
+        </a>
+        <a class="iconcard" href="connect.html#chat">
+          <div class="iconcard__top"><span class="iconcard__glyph">💬</span><span class="iconcard__name">Chat</span></div>
+          <p>Ask your notes — grounded and cited.</p>
+          <span class="iconcard__more">Read more →</span>
+        </a>
+        <a class="iconcard" href="reference.html#appearance">
+          <div class="iconcard__top"><span class="iconcard__glyph">🌗</span><span class="iconcard__name">Appearance</span></div>
+          <p>Switch light / dark / system.</p>
+          <span class="iconcard__more">Read more →</span>
+        </a>
+        <a class="iconcard" href="reference.html#settings">
+          <div class="iconcard__top"><span class="iconcard__glyph">⚙️</span><span class="iconcard__name">Settings</span></div>
+          <p>Models, filters, and the Claude API key.</p>
+          <span class="iconcard__more">Read more →</span>
+        </a>
+        <a class="iconcard" href="reference.html#refresh">
+          <div class="iconcard__top"><span class="iconcard__glyph">🔄</span><span class="iconcard__name">Refresh</span></div>
+          <p>Reload domains and notes from the vault.</p>
+          <span class="iconcard__more">Read more →</span>
+        </a>
       </div>
 
-      <!-- INSTALL -->
       <h2 id="install">Install &amp; requirements</h2>
-      <ul>
-        <li><strong>macOS 14+ on Apple Silicon</strong> (16 GB RAM for the 7B local model; 64 GB for 32B).</li>
-        <li><strong>Python 3.11+</strong> with <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener">uv</a>.</li>
-        <li><strong>Claude Code</strong> (for the default transcription + the concept/link reasoning) — or skip it and run fully local.</li>
-        <li><strong>Obsidian</strong> to browse the vault (optional but intended).</li>
-        <li>A OneNote PDF export (made on the OneNote <strong>Windows</strong> app).</li>
-      </ul>
-      <pre><code><span class="cmt"># set up; --extra local adds the on-device vision model (mlx-vlm)</span>
+      <p>Python 3.11+ and <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener">uv</a> on
+        macOS 14+ (Apple Silicon). The first local-model run downloads ~5&nbsp;GB.</p>
+      <pre><code><span class="cmt"># set up (add --extra local for the on-device model)</span>
 uv sync --extra dev --extra local
 
-cd macapp &amp;&amp; ./build_app.sh &amp;&amp; open Engram.app   <span class="cmt"># the GUI</span></code></pre>
+<span class="cmt"># build &amp; open the macOS app</span>
+cd macapp &amp;&amp; ./build_app.sh &amp;&amp; open Engram.app</code></pre>
 
-      <!-- MODEL -->
-      <h2 id="model">How notes are organized</h2>
-      <p>Engram mirrors OneNote's structure with one extra grouping level:</p>
-      <pre><code>Domain                 e.g. "Data Science"  (many courses, one knowledge base)
-└─ Section group       e.g. "CSE 234"       (one exported PDF = one course)
-   └─ Section          e.g. "MLSys"
-      └─ Note           a OneNote page → &lt;Title&gt;.md  +  &lt;Title&gt;.pdf (the leaf)</code></pre>
-      <p>
-        On disk: <code>~/Engram/&lt;Domain&gt;/&lt;SectionGroup&gt;/&lt;Section&gt;/&lt;Title&gt;.{md,pdf}</code>.
-        The split per-note <strong>PDF leaf is the source of truth</strong>; the <code>.md</code>
-        summary is a searchable projection above it.
-      </p>
-
-      <!-- EXPORT -->
-      <h2 id="export">Getting notes out of OneNote</h2>
-      <p>
-        OneNote can't reliably export a whole large notebook, so export <strong>per section group</strong>
-        (one course). The repo's <code>windows-export/</code> helper automates it:
-      </p>
-      <ul>
-        <li><code>export_onenote.ps1</code> (Windows) drives the OneNote desktop COM API to export each
-          section group to PDF (handles nested groups + on-demand sync).</li>
-        <li><code>merge_sections.py</code> (Mac) merges any section-by-section exports into one
-          <code>&lt;Course&gt;.pdf</code>:
-          <pre><code>uv run python windows-export/merge_sections.py "~/exports/Data Science"</code></pre></li>
-      </ul>
-      <p>The result is one <code>&lt;Course&gt;.pdf</code> per section group, ready for <code>engram add</code>.</p>
-
-      <!-- INDEX -->
-      <h2 id="index">An index, not a transcription</h2>
-      <p>
-        Each note becomes a concise, searchable digest: every key <strong>concept, definition, and
-        term</strong>, plus <strong>all formulas verbatim in LaTeX</strong> — not a word-for-word
-        copy. Routine examples and arithmetic are summarized; the full page is one scroll below. The
-        summary never invents content, and illegible parts are flagged.
-      </p>
-
-      <!-- MODELS -->
-      <h2 id="models">Transcription models</h2>
-      <p>Choose the model that reads your pages in <strong>Settings → Transcription model</strong> (or via the CLI). All produce the same index-style summary.</p>
-      <table class="docs-table">
-        <tr><th>Option</th><th>What it is</th><th>Best for</th></tr>
-        <tr><td><code>claude-code</code></td><td>Claude vision via your Claude Code login (default)</td><td>Best quality &amp; math; no API key. Watch rate limits on big batches.</td></tr>
-        <tr><td><code>local-7b</code></td><td>Qwen2.5-VL 7B on-device (mlx-vlm)</td><td>Fast, free, fully offline/private.</td></tr>
-        <tr><td><code>local-32b</code></td><td>Qwen2.5-VL 32B on-device</td><td>Better local quality; ~3-4× slower, needs ~64 GB.</td></tr>
-      </table>
-      <pre><code>uv run python -m engram config set transcribe local-7b   <span class="cmt"># or claude-code / local-32b</span></code></pre>
-      <p>The <strong>concept-map &amp; cross-link</strong> reasoning runs through Claude Code too (text only) — pick the model under <strong>Settings → Concept &amp; cross-link model</strong>.</p>
-
-      <!-- FILTERS -->
-      <h2 id="filters">Filters — what gets indexed</h2>
-      <p>
-        Engram indexes knowledge, not everything. By default it <strong>skips</strong> (and reports —
-        never silently drops) content that's noise for an index. Skipped notes still exist in the
-        source PDF. Toggle these in <strong>Settings</strong> or the config.
-      </p>
-      <table class="docs-table">
-        <tr><th>Filter</th><th>Skips</th><th>Config</th></tr>
-        <tr><td>Papers</td><td>attached papers &amp; printouts/scans</td><td><code>skip_papers</code></td></tr>
-        <tr><td>Homeworks</td><td>homework / hw / assignment / lab / project</td><td><code>skip_homework</code></td></tr>
-        <tr><td>Long code</td><td>code notebooks over N pages</td><td><code>skip_code_over_pages</code></td></tr>
-        <tr><td>Custom</td><td>any section/title substring you add (e.g. "lit")</td><td><code>skip_section_patterns</code></td></tr>
-      </table>
-      <div class="callout callout--warn">
-        <div class="callout__title">Page count is the real span</div>
-        Long-code is measured by the note's actual page span — not the footer "第 N 页" number, which is
-        the section's running page index and can start mid-section.
+      <h2 id="start">Recommended start ★</h2>
+      <div class="callout callout--start">
+        <div class="callout__title">🚀 Don't import everything at once — start with one course.</div>
+        <p style="margin:.3em 0 0">Try one section group first, check the summaries, pick your model and
+          filters, then scale. See <a href="using.html#add">Add</a>.</p>
       </div>
+      <ol class="steps">
+        <li><strong>Add</strong> one course PDF to a domain (see <a href="using.html#add">Using Engram → Add</a>).</li>
+        <li><strong>Link</strong> the domain, then build <strong>Concepts</strong> (see <a href="connect.html">Connecting knowledge</a>).</li>
+        <li>Open the <strong>Graph</strong> and <strong>Chat</strong> with your notes.</li>
+      </ol>
 
-      <!-- CROSSLINKS -->
-      <h2 id="crosslinks">Cross-links</h2>
-      <p>
-        A holistic, <strong>domain-wide</strong> pass adds a <code>## Related</code> section to each
-        note — links to related notes, <em>including across section groups</em>. Safe by construction
-        (no dangling links, symmetric, capped).
-      </p>
-      <pre><code>uv run python -m engram link "Data Science"</code></pre>
-
-      <!-- GRAPH -->
-      <h2 id="graph">Concept graph</h2>
-      <p>
-        Beyond folders, Engram distils the domain into a <strong>multi-layer graph of concepts</strong>
-        (not files): <strong>Concepts → Themes → Areas</strong>. Each level is a <strong>tab</strong>
-        in the app you switch between to change granularity. Nodes are <strong>colored by cluster</strong>
-        (their parent); edges are <strong>solid</strong> (two concepts share a note) or <strong>dashed</strong>
-        (related by the model's general knowledge). Click a concept to see — and open — the notes it covers.
-      </p>
-      <pre><code>uv run python -m engram concepts "Data Science" --layers 3   <span class="cmt"># 3 tabs</span></code></pre>
-      <p>In the app: the <strong>brain icon</strong> builds it (pick scope + layers); the <strong>Graph</strong> icon opens it.</p>
-
-      <!-- CROSS-NOTEBOOK -->
-      <h2 id="crossnotebook">Cross-notebook graphs</h2>
-      <p>
-        A concept graph can span <strong>one notebook or several</strong>. Building across notebooks
-        (e.g. Data Science + Mathematics) surfaces concepts that <strong>connect across domains</strong>.
-        In the brain builder, just check 2+ notebooks; on the CLI, pass more than one domain:
-      </p>
-      <pre><code>uv run python -m engram concepts "Data Science" "Mathematics" --layers 3</code></pre>
-      <p>Combined maps are stored under <code>~/Engram/_concept_maps/&lt;A + B&gt;/</code>; clicking a concept opens its note even if it lives in the other notebook. A combined map is <strong>shared</strong> — it opens from <em>either</em> member notebook's entrance, and a switcher lets you flip between a notebook's own map and any shared one.</p>
-
-      <!-- CHAT -->
-      <h2 id="chat">Chat — query &amp; synthesis</h2>
-      <p>
-        Once a concept graph exists, you can <strong>chat with your knowledge base</strong>. Context is
-        pulled <strong>deterministically from the graph and your notes</strong> (no embeddings) and the
-        answer is <strong>grounded and cited</strong> — it links the notes it drew on as
-        <code>[[wikilinks]]</code> (shown as clickable <em>Sources</em>), and anything the model adds
-        beyond your notes is put under a clearly-marked <strong>"Beyond your notes"</strong> section.
-        Two modes:
-      </p>
-      <table class="docs-table">
-        <tr><th>Mode</th><th>For</th><th>Context it sees</th></tr>
-        <tr><td><strong>Query</strong></td><td>a specific question about one <em>course</em> or one <em>concept</em></td><td>that concept's notes + its graph neighbours (or all of a course's note summaries)</td></tr>
-        <tr><td><strong>Synthesis</strong></td><td>a big-picture question about a whole <em>field</em></td><td>the concept graph + overview MOCs + the field's note summaries (budgeted, most-central first)</td></tr>
-      </table>
-      <p>
-        In the app: the <strong>Chat</strong> toolbar button opens it with <strong>Query / Synthesis</strong>
-        tabs; you can also click a node in the graph and pick <strong>"Ask about this"</strong> to chat
-        about that concept. The chat model defaults to <strong>Claude</strong> and is switchable in Settings.
-      </p>
-      <pre><code><span class="cmt"># ask about one concept, or one course</span>
-uv run python -m engram chat query "Data Science" "How does value iteration converge?" --concept "Markov Decision Processes"
-uv run python -m engram chat query "Data Science" "Give me an exam cheat-sheet" --course "DSC 120"
-
-<span class="cmt"># a big question about a whole field (one or more notebooks)</span>
-uv run python -m engram chat synthesis "Mathematics" -q "What's the unifying story, and what's missing?"</code></pre>
-      <div class="callout callout--warn">
-        <div class="callout__title">What chat can and can't reach</div>
-        Chat answers using your notes plus the <strong>model's own knowledge</strong> (which, depending on
-        the model, may include general/world knowledge). It does <strong>not</strong> browse the internet or
-        use external (MCP) tools yet — that's planned for a later version.
-      </div>
-
-      <!-- APP -->
-      <h2 id="app">The Mac app</h2>
-      <ul>
-        <li><strong>Sidebar:</strong> domains → section-group folders → sections → notes (folded by default).</li>
-        <li><strong>Note view:</strong> the Markdown summary with <strong>LaTeX math + code rendered</strong> (KaTeX), beside the original-page PDF.</li>
-        <li><strong>Add / Link / Concepts / Graph / Chat / Settings</strong> in the toolbar.</li>
-        <li><strong>Settings (gear):</strong> model dropdowns (transcription + concept + chat), filter toggles, Claude Code status.</li>
-        <li><strong>Graph:</strong> the multi-layer concept graph with granularity tabs; click a node for its notes — or to chat about it.</li>
-        <li><strong>Chat:</strong> Query / Synthesis modes with grounded, cited answers (enabled once a concept graph exists).</li>
-      </ul>
-      <pre><code>cd macapp &amp;&amp; ./build_app.sh &amp;&amp; open Engram.app</code></pre>
-
-      <!-- CLI -->
-      <h2 id="cli">CLI reference</h2>
-      <pre><code><span class="cmt"># domains</span>
-engram domain create "Data Science"
-engram domain list
-engram domain remove "Data Science"
-
-<span class="cmt"># add / update one section group (a PDF) — incremental</span>
-engram add "Data Science" "CSE 234.pdf" [--group "CSE 234"]
-
-<span class="cmt"># domain-wide cross-links</span>
-engram link "Data Science"
-
-<span class="cmt"># multi-layer concept map (1 domain, or several for cross-notebook)</span>
-engram concepts "Data Science" ["Mathematics"] [--layers 3]
-
-<span class="cmt"># chat (needs a concept graph): query a course/concept, or synthesise a field</span>
-engram chat query "Data Science" "…question…" (--concept "…" | --course "…")
-engram chat synthesis "Mathematics" ["Data Science"] -q "…big question…"
-
-<span class="cmt"># inspect structure (no model) / status / config</span>
-engram inspect "CSE 234.pdf"
-engram status
-engram config set transcribe claude-code      <span class="cmt"># transcribe / reasoning_model / chat_model / skip_* / vault_path</span>
-engram config set-key sk-ant-…                 <span class="cmt"># optional Claude API key</span></code></pre>
-      <p style="color:var(--muted); font-size:.9rem">
-        Run as <code>uv run python -m engram …</code> from the repo root.
-      </p>
-
-      <!-- LIMITS -->
-      <h2 id="limits">Honest limitations</h2>
-      <ul>
-        <li><strong>Structure parsing is heuristic &amp; locale-dependent</strong> (note boundaries + the
-          <code>分区 … 的第 N 页</code> footer); an English-locale fallback is future work.</li>
-        <li><strong>Re-exports aren't pixel-stable</strong> — a fresh OneNote export of the same notes
-          reads as "modified," so cross-export incremental determinism isn't solved.</li>
-        <li><strong>Claude Code rate limits</strong> can throttle a few-hundred-note batch; switch to a
-          local model if so.</li>
-        <li><strong>Concept extraction quality varies</strong> with the model; regenerate to re-roll.</li>
-        <li><strong>One-way</strong> (OneNote → vault); never written back.</li>
-      </ul>
       <p style="margin-top:2em; color:var(--muted); font-size:.9rem">
-        Engram is an early v0.1 research prototype · <a href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">source on GitHub</a> ·
+        Engram is an early v0.2 research prototype ·
+        <a href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">source on GitHub</a> ·
         <a href="../index.html">back to home</a>
       </p>
     </main>
   </div>
 
   <script>
-    // Sidebar scrollspy: highlight the section currently in view.
     (function () {
-      var links = Array.prototype.slice.call(document.querySelectorAll(".docs-side a"));
-      var map = {};
-      links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
-      var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            links.forEach(function (l) { l.classList.remove("active"); });
-            var a = map[e.target.id]; if (a) a.classList.add("active");
-          }
+      var btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      function effective() {
+        var t = document.documentElement.getAttribute('data-theme');
+        return (t === 'dark' || t === 'light') ? t : (mq.matches ? 'dark' : 'light');
+      }
+      function render() {
+        var icon = btn.querySelector('.nav__theme-icon');
+        if (icon) icon.textContent = effective() === 'dark' ? '☀️' : '🌙';
+      }
+      btn.addEventListener('click', function () {
+        var next = effective() === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('engram-theme', next); } catch (e) {}
+        render();
+      });
+      if (mq.addEventListener) mq.addEventListener('change', render);
+      render();
+    })();
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll(".docs-side a[href^='#']"));
+      var map = {}; links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+      var obs = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting) { links.forEach(function (l) { l.classList.remove("active"); });
+            var a = map[e.target.id]; if (a) a.classList.add("active"); }
         });
       }, { rootMargin: "-80px 0px -70% 0px" });
       document.querySelectorAll(".docs-main h2[id]").forEach(function (h) { obs.observe(h); });

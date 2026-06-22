@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Engram Docs — Connecting knowledge</title>
+  <meta name="description" content="Connecting knowledge in Engram: cross-links, the multi-layer concept graph, drilling Areas into Themes, cross-notebook graphs, and grounded cited chat." />
+  <meta name="color-scheme" content="light dark" />
+  <script>
+    (function () { try { var t = localStorage.getItem('engram-theme');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();
+  </script>
+  <link rel="icon" href="../assets/engram_logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="docs.css" />
+</head>
+<body>
+  <header class="docs-top">
+    <a class="docs-top__brand" href="../index.html">
+      <img src="../assets/engram_logo.svg" alt="Engram logo" /> Engram
+    </a>
+    <span class="docs-top__tag">· Docs</span>
+    <span class="docs-top__spacer"></span>
+    <a class="docs-top__link" href="index.html">Docs home</a>
+    <a class="docs-top__link" href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">GitHub ↗</a>
+    <button class="nav__theme" id="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle light / dark theme">
+      <span class="nav__theme-icon" aria-hidden="true">🌙</span>
+    </button>
+  </header>
+
+  <div class="docs-wrap">
+    <aside class="docs-side">
+      <h4>Documentation</h4>
+      <a class="pagelink" href="index.html">Overview</a>
+      <a class="pagelink" href="using.html">Using Engram</a>
+      <a class="pagelink active" href="connect.html">Connecting knowledge</a>
+      <a class="pagelink" href="reference.html">Reference</a>
+      <h4 class="onthispage">On this page</h4>
+      <a href="#link">Link — cross-links</a>
+      <a href="#concepts">Concepts — the graph</a>
+      <a href="#graph">Graph — explore &amp; drill</a>
+      <a href="#crossnotebook">Cross-notebook graphs</a>
+      <a href="#chat">Chat</a>
+      <a href="#stale">Staleness</a>
+    </aside>
+
+    <main class="docs-main">
+      <h1>Connecting knowledge</h1>
+      <p class="docs-lede">Two parallel ways to connect notes: note-to-note cross-links, and an
+        abstract concept graph. Plus chat over both.</p>
+
+      <h2 id="link">Link — cross-links</h2>
+      <p>A holistic, <strong>domain-wide</strong> pass reads every note summary and adds a
+        <code>## Related</code> section to each note — links to related notes, <em>including across
+        section groups</em>. Safe by construction: links only point to notes that exist (no dangling
+        links), are symmetric, and capped per note.</p>
+      <p>You see the effect at the bottom of each note's summary, and — most powerfully — in
+        <strong>Obsidian</strong>, where the <code>[[wikilinks]]</code> are clickable and feed
+        Obsidian's own graph.</p>
+      <pre><code>uv run python -m engram link "Data Science"</code></pre>
+      <div class="callout callout--warn">
+        <div class="callout__title">Design note — rebuilds from scratch</div>
+        <code>link</code> recomputes the whole domain's <code>## Related</code> each run. The app asks
+        before re-running if links already exist (it would overwrite them). A delta-driven incremental
+        refresh is the next step.
+      </div>
+
+      <h2 id="concepts">Concepts — build the graph</h2>
+      <p>Beyond folders, Engram distils the domain into a <strong>multi-layer graph of concepts</strong>
+        (not files): <strong>Concepts → Themes → Areas</strong>. Each level is a tab you switch between
+        to change granularity. It's a separate artifact from cross-links — it doesn't need them, and
+        they don't need it.</p>
+      <pre><code>uv run python -m engram concepts "Data Science" --layers 3</code></pre>
+      <p>In the app, the <strong>Concepts</strong> (brain) icon builds it — pick scope + layers. It also
+        asks before overwriting an existing map.</p>
+
+      <h2 id="graph">Graph — explore &amp; drill</h2>
+      <p>The <strong>Graph</strong> icon opens the interactive, force-directed view. Nodes are
+        <strong>colored by cluster</strong> (their parent); edges are <strong>solid</strong> (two
+        concepts share a note) or <strong>dashed</strong> (related by the model's knowledge). Drag a
+        node, pinch to zoom, click one for the notes it covers.</p>
+      <p><strong>Drill-down:</strong> click an <em>Area</em> and choose “Drill into its themes” — the
+        view jumps one layer finer with that area's themes spotlit and the rest dimmed. A “clear
+        spotlight” pill resets it.</p>
+
+      <h2 id="crossnotebook">Cross-notebook graphs</h2>
+      <p>Pick two or more domains in the Concepts dialog to build a graph that <strong>spans
+        notebooks</strong> — surfacing concepts shared across fields. It lands in a combined map you can
+        switch to from the graph's map menu.</p>
+
+      <h2 id="chat">Chat — query &amp; synthesis</h2>
+      <p>Once a concept graph exists, <strong>chat with your notes</strong>. Context is pulled
+        deterministically from the graph and your summaries — no embeddings — and every answer is
+        <strong>grounded and cited</strong>, with anything <strong>beyond your notes</strong> clearly
+        marked. <strong>Query</strong> a single course or concept, or <strong>Synthesise</strong> a
+        whole field.</p>
+      <pre><code>engram chat query "Data Science" "…question…" (--concept "…" | --course "…")
+engram chat synthesis "Mathematics" ["Data Science"] -q "…big question…"</code></pre>
+
+      <h2 id="stale">Staleness — keeping it current</h2>
+      <p>The cross-links and concept graph are snapshots: when you add or edit notes, they fall behind.
+        Engram tracks a per-domain revision and shows a <strong>stale dot</strong> on the Link and
+        Concepts icons when they're out of date. Re-run them to refresh.</p>
+      <pre><code>uv run python -m engram domain status "Data Science"   <span class="cmt"># links / concepts stale?</span></code></pre>
+
+      <p style="margin-top:2em; color:var(--muted); font-size:.9rem">
+        Next: <a href="reference.html">Reference →</a>
+      </p>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var btn = document.getElementById('theme-toggle'); if (!btn) return;
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      function eff() { var t = document.documentElement.getAttribute('data-theme');
+        return (t === 'dark' || t === 'light') ? t : (mq.matches ? 'dark' : 'light'); }
+      function render() { var i = btn.querySelector('.nav__theme-icon'); if (i) i.textContent = eff() === 'dark' ? '☀️' : '🌙'; }
+      btn.addEventListener('click', function () { var n = eff() === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', n); try { localStorage.setItem('engram-theme', n); } catch (e) {} render(); });
+      if (mq.addEventListener) mq.addEventListener('change', render); render();
+    })();
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll(".docs-side a[href^='#']"));
+      var map = {}; links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+      var obs = new IntersectionObserver(function (es) { es.forEach(function (e) {
+        if (e.isIntersecting) { links.forEach(function (l) { l.classList.remove("active"); });
+          var a = map[e.target.id]; if (a) a.classList.add("active"); } });
+      }, { rootMargin: "-80px 0px -70% 0px" });
+      document.querySelectorAll(".docs-main h2[id]").forEach(function (h) { obs.observe(h); });
+    })();
+  </script>
+</body>
+</html>

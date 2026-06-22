@@ -4,15 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Engram — your handwritten notes, as a knowledge graph</title>
-  <meta name="description" content="Engram turns Microsoft OneNote courses (exported as PDF) into an Obsidian-native index on your Mac — searchable summaries of each page's key ideas and formulas, noise filtered out, organized as a hierarchy that is also a multi-layer concept graph." />
-  <meta name="color-scheme" content="light" />
+  <meta name="description" content="Engram organizes your handwritten notes — a OneNote export or any PDF of notes — into an Obsidian-native vault on your Mac: searchable summaries of each page's key ideas and formulas, noise filtered out, organized as a hierarchy that is also a multi-layer concept graph. An organizer for what you've learned, not a tutor." />
+  <meta name="color-scheme" content="light dark" />
+  <!-- Set theme before paint to avoid a flash (toggle overrides the OS setting). -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('engram-theme');
+        if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
 
   <!-- Open Graph -->
   <meta property="og:title" content="Engram — your handwritten notes, as a knowledge graph" />
-  <meta property="og:description" content="OneNote PDF export → a searchable index of key ideas + formulas (noise filtered) → an Obsidian vault that is a hierarchy and a multi-layer concept graph. Claude Code or local, macOS-native." />
+  <meta property="og:description" content="Handwritten notes (a OneNote export or any PDF) → a searchable index of key ideas + formulas (noise filtered) → an Obsidian vault that is a hierarchy and a multi-layer concept graph. An organizer for what you've learned. Claude Code or local, macOS-native." />
   <meta property="og:type" content="website" />
 
   <link rel="icon" href="assets/engram_logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -32,6 +42,10 @@
       <a href="#start">Get started</a>
       <a href="docs/">Docs</a>
     </nav>
+    <button class="nav__theme" id="theme-toggle" type="button"
+            aria-label="Toggle light / dark theme" title="Toggle light / dark theme">
+      <span class="nav__theme-icon" aria-hidden="true">🌙</span>
+    </button>
     <a class="nav__cta" href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">GitHub ↗</a>
   </header>
 
@@ -39,44 +53,22 @@
   <main id="top">
     <section class="hero">
       <div class="hero__inner">
-        <p class="hero__eyebrow">macOS · indexes the knowledge · concept graph · chat</p>
-        <h1 class="hero__title">Your handwritten notes,<br /><span class="grad">as a knowledge graph.</span></h1>
+        <h1 class="hero__title">Your notes, organized into<br /><span class="grad">a map of what you know.</span></h1>
         <p class="hero__lede">
-          <strong>Engram</strong> turns Microsoft OneNote courses (exported as PDF) into an
-          <a href="https://obsidian.md" target="_blank" rel="noopener">Obsidian</a>-native Markdown
-          vault on your Mac. It's an <strong>index, not a transcription</strong>: each page becomes a
-          concise, searchable summary of its <strong>key ideas and formulas</strong>, the original
-          right below. Related notes link into a multi-layer <strong>concept graph</strong> — and now
-          you can <strong>chat with it</strong>, grounded in your notes and cited.
+          <strong>Engram</strong> turns your handwritten notes — a OneNote export, or
+          <strong>any PDF</strong> — into an
+          <a href="https://obsidian.md" target="_blank" rel="noopener">Obsidian</a>-native vault.
+          Not a tutor: an <strong>organizer for what you've already learned</strong>. Each page
+          becomes a searchable summary of its key ideas and formulas (original below), notes link into
+          a <strong>concept graph</strong>, and you can <strong>chat with it</strong> — grounded and
+          cited — to see what you know and what's still missing.
         </p>
-
-        <div class="hero__badges">
-          <span class="badge">🔒 Local-first · nothing leaves your Mac</span>
-          <span class="badge">🪶 The raw page is always the source of truth</span>
-          <span class="badge">♻️ Incremental &amp; idempotent</span>
-        </div>
 
         <div class="hero__cta">
           <a class="btn btn--primary" href="#graph">See the graph ↓</a>
           <a class="btn" href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">View source</a>
           <a class="btn" href="#start">Quick start</a>
         </div>
-
-        <p class="hero__by">
-          A research prototype by
-          <a href="https://kbian.org" target="_blank" rel="noopener">Kaiwen Bian</a>
-        </p>
-      </div>
-
-      <!-- prototype banner -->
-      <div class="protobar" role="note">
-        <span class="protobar__tag">PROTOTYPE</span>
-        <span>
-          This is an early <strong>v0.2</strong> prototype (v0.2 adds <strong>chat</strong>). It ingests
-          <strong>Microsoft OneNote notebooks exported as PDF</strong>, and runs on
-          <strong>macOS&nbsp;14+ (Apple&nbsp;Silicon)</strong>. See
-          <a href="#status">prototype status</a> for what is and isn't validated yet.
-        </span>
       </div>
     </section>
 
@@ -85,10 +77,11 @@
       <div class="section__head reveal">
         <h2>From an opaque PDF to a navigable brain</h2>
         <p class="section__sub">
-          You already write notes on an iPad with Apple Pencil in OneNote. Big notebooks can't be
-          exported whole, so you export <strong>one section group at a time</strong> (e.g. one course)
-          to PDF. Engram groups several such PDFs into a single <strong>domain</strong> — treated as
-          one combined knowledge base — and turns it into something you can actually think with.
+          You already write notes by hand — on an iPad, a tablet, or paper you scan. Export them to
+          PDF (from OneNote <strong>one section group at a time</strong>, e.g. one course, or bring
+          <strong>any PDF of notes</strong>) and Engram groups several such PDFs into a single
+          <strong>domain</strong> — treated as one combined knowledge base — and turns it into
+          something you can actually think with. You can also drop in a single page as one note.
         </p>
       </div>
 
@@ -128,11 +121,8 @@
       <div class="section__head reveal">
         <h2>A hierarchy that is also a graph</h2>
         <p class="section__sub">
-          Domain → Section group → Section → Note gives you the tree. A holistic pass then distills
-          the whole domain into a <strong>multi-layer concept map</strong> — Concepts → Themes → Areas —
-          where nodes cluster by parent and connect by shared notes (solid) and model knowledge (dashed).
-          The macOS app renders each layer as an interactive, force-directed graph —
-          <strong>switch layers, drag a node, or click one to see the notes it covers.</strong>
+          The folder tree, plus a <strong>multi-layer concept map</strong> — Concepts → Themes → Areas.
+          Drill from an Area into its themes; click any node for the notes it covers.
         </p>
       </div>
 
@@ -159,10 +149,7 @@
       <div class="section__head reveal">
         <h2>How a page becomes a note</h2>
         <p class="section__sub">
-          Each note keeps its original page as a faithful per-note PDF <strong>leaf</strong>; above it
-          sits a concise, searchable <strong>index entry</strong> — the page's key ideas and all its
-          formulas — always one scroll from the original. Engram indexes the knowledge, not the page:
-          nothing is invented, illegible parts are flagged, and papers / homeworks / long code are skipped.
+          A searchable summary above, the original page one scroll below. Read → Connect → Use.
         </p>
       </div>
 
@@ -171,54 +158,62 @@
         <!-- raw page -->
         <div class="paper">
           <div class="paper__scan"></div>
-          <div class="paper__title">Pop &amp; Timing</div>
+          <div class="paper__title">Gradient Descent</div>
           <svg class="ink" viewBox="0 0 220 150" aria-hidden="true">
-            <path d="M14 40 C 26 22, 40 60, 52 38 S 78 20, 90 44" />
-            <path d="M16 64 C 40 58, 70 70, 110 60 S 170 52, 196 64" />
-            <path d="M16 84 C 50 80, 90 92, 140 82" />
-            <path d="M16 104 C 44 100, 66 112, 96 104" />
-            <path d="M120 96 l 40 -22 l 40 22" class="ink--diagram" />
-            <circle cx="160" cy="74" r="4" class="ink--diagram" />
+            <path d="M14 38 C 28 26, 46 50, 62 38 S 92 26, 104 42" />
+            <path d="M16 58 C 46 52, 80 64, 122 56 S 176 48, 200 58" />
+            <path d="M16 80 C 44 76, 70 86, 104 79" />
+            <path class="ink--diagram" d="M116 122 Q 164 60 212 122" />
+            <circle cx="132" cy="111" r="3.4" class="ink--diagram" />
+            <circle cx="148" cy="100" r="3.4" class="ink--diagram" />
+            <circle cx="161" cy="93"  r="3.4" class="ink--diagram" />
           </svg>
           <div class="paper__tag">handwritten · ruled paper preserved</div>
         </div>
 
         <div class="transform__arrow" aria-hidden="true">
-          <span class="transform__chip">local VLM reads the page</span>
+          <span class="transform__chip">the model reads the page</span>
           <svg viewBox="0 0 120 24" width="120" height="24"><path d="M2 12h104" stroke="currentColor" stroke-width="2" fill="none"/><path d="M104 5l12 7-12 7z" fill="currentColor"/></svg>
         </div>
 
         <!-- rendered markdown -->
         <div class="mdcard">
           <div class="mdcard__fm">
-            <span>domain: Skateboarding</span>
-            <span>section_group: Tricks</span>
-            <span>section: Ollies</span>
+            <span>domain: Data Science</span>
+            <span>section_group: CSE 234</span>
+            <span>section: Optimization</span>
             <span>kind: handwritten</span>
           </div>
-          <h3 class="md-h1">Pop &amp; Timing</h3>
-          <h4 class="md-h2">## Mechanics</h4>
-          <p class="md-p">Snap the tail down, then slide the front foot up the board to level it out.</p>
+          <h3 class="md-h1">Gradient Descent</h3>
+          <h4 class="md-h2">## Update rule</h4>
+          <p class="md-p">Step downhill along the <strong>negative gradient</strong>; the learning rate η sets the step size.</p>
           <ul class="md-ul">
-            <li>Pop comes from the <strong>back foot</strong>, not a jump.</li>
-            <li>Timing: pop → drag → level at the apex.</li>
+            <li>η too large → diverges; too small → slow.</li>
+            <li>Converges to the global min for a <strong>convex</strong> loss.</li>
           </ul>
-          <div class="md-math">$$h \approx \tfrac{1}{2}\,v_{\text{pop}}\,t$$</div>
-          <pre class="md-code"><code>![[Pop &amp; Timing.pdf]]   <span class="cmt"># the raw leaf, embedded</span></code></pre>
-          <div class="mdcard__rel">## Related → <a>[[Level-out]]</a> · <a>[[Edge control]]</a></div>
+          <div class="md-math">$$\theta_{t+1} = \theta_t - \eta\,\nabla_\theta J(\theta_t)$$</div>
+          <pre class="md-code"><code>![[Gradient Descent.pdf]]   <span class="cmt"># the raw leaf, embedded</span></code></pre>
+          <div class="mdcard__rel">## Related → <a>[[Backpropagation]]</a> · <a>[[Convexity]]</a></div>
         </div>
       </div>
 
-      <!-- the 6 stages -->
-      <ol class="stages reveal">
-        <li><span class="stages__n">1</span><b>Parse</b><span>PDF → notes; recover Domain → Section group → Section → Note from the text layer <em>(PyMuPDF, no model)</em>.</span></li>
-        <li><span class="stages__n">2</span><b>Leaf</b><span>Split each note's original page(s) into a faithful per-note PDF + page images.</span></li>
-        <li><span class="stages__n">3</span><b>Index</b><span>A vision model (Claude Code or local) writes a concise, searchable summary — key ideas + <em>all formulas</em> (LaTeX) — not a transcription. Papers, homeworks &amp; long code notebooks are filtered out.</span></li>
-        <li><span class="stages__n">4</span><b>Roll-up</b><span>Section · section-group · domain overview notes (MOCs) wikilink the tree.</span></li>
-        <li><span class="stages__n">5</span><b>Vault</b><span>Idempotent write: <code>&lt;Domain&gt;/&lt;SectionGroup&gt;/&lt;Section&gt;/&lt;Title&gt;.md</code> beside <code>.pdf</code>.</span></li>
-        <li><span class="stages__n">6</span><b>Link</b><span>Holistic domain-wide pass adds <code>## Related</code> wikilinks — even across section groups.</span></li>
-        <li><span class="stages__n">7</span><b>Concepts</b><span>A multi-layer concept map (Concepts → Themes → Areas) — the graph view.</span></li>
-        <li><span class="stages__n">8</span><b>Chat</b><span><em>v0.2</em> — once the graph exists, <b>query</b> a course/concept or <b>synthesise</b> a field; answers are grounded in your notes and cited.</span></li>
+      <!-- three steps -->
+      <ol class="flow reveal">
+        <li class="flow__step">
+          <span class="flow__n">1</span>
+          <b>Read</b>
+          <span>Every page becomes a concise, searchable summary of its key ideas and <em>all formulas</em> — Claude or a local model. Noise filtered, nothing invented, the original kept right below.</span>
+        </li>
+        <li class="flow__step">
+          <span class="flow__n">2</span>
+          <b>Connect</b>
+          <span>A domain-wide pass cross-links related notes and distils a multi-layer <em>concept graph</em> — Concepts → Themes → Areas.</span>
+        </li>
+        <li class="flow__step">
+          <span class="flow__n">3</span>
+          <b>Use</b>
+          <span>Browse it in Obsidian or the macOS app — and <em>chat</em> with it, grounded in your notes and cited.</span>
+        </li>
       </ol>
     </section>
 
@@ -228,11 +223,9 @@
         <span class="tagpill">New in v0.2</span>
         <h2>Talk to your knowledge base</h2>
         <p class="section__sub">
-          Once the concept graph exists, you can <strong>chat with your notes</strong>. Context is pulled
-          deterministically from the graph and your summaries — no embeddings — and every answer is
-          <strong>grounded and cited</strong> (the notes it used become clickable sources), with anything
-          <strong>beyond your notes</strong> clearly marked. Two modes: <strong>Query</strong> a single
-          course or concept, or <strong>Synthesise</strong> a whole field.
+          Chat with your notes — <strong>grounded and cited</strong>, with anything
+          <strong>beyond your notes</strong> clearly marked. <strong>Query</strong> a course or concept,
+          or <strong>Synthesise</strong> a whole field.
         </p>
       </div>
 
@@ -279,44 +272,34 @@
     <section class="section" id="features">
       <div class="section__head reveal">
         <h2>What makes it different</h2>
-        <p class="section__sub">Built for a personal knowledge base you actually trust — local, faithful, and reproducible.</p>
+        <p class="section__sub">An organizer for what you've already learned — local, faithful, and reproducible. It shows you the shape of your knowledge, not a feed of new material.</p>
       </div>
 
       <div class="features">
+        <article class="feat feat--accent reveal">
+          <div class="feat__ic">🧠</div>
+          <h3>An organizer, not a tutor</h3>
+          <p>Engram doesn't try to teach you the material. It takes what you've <strong>already</strong> written and makes it legible to you again — a clear map of what you know, where ideas connect, and <strong>where the gaps are</strong>. You learn from your own notes; Engram just organizes them.</p>
+        </article>
+        <article class="feat feat--wide reveal">
+          <div class="feat__ic">🎯</div>
+          <h3>An index, not an archive</h3>
+          <p>Each note becomes a searchable digest of its <strong>key ideas and all formulas</strong> — find and reconnect, then jump to the original page (the source of truth, embedded in every note). It <strong>filters out noise</strong> — papers, homeworks, long code — and never invents; illegible parts are flagged.</p>
+        </article>
         <article class="feat reveal">
           <div class="feat__ic">🎛️</div>
           <h3>Your choice of model</h3>
-          <p>Pick the reader in Settings: <strong>Claude Code</strong> (vision, via your login — best quality, default) or a <strong>local</strong> <a href="https://github.com/Blaizzy/mlx-vlm" target="_blank" rel="noopener">Qwen2.5-VL</a> 7B/32B, fully on-device. The concept-map &amp; cross-link reasoning runs through Claude Code too — all from a dropdown, no code.</p>
-        </article>
-        <article class="feat reveal">
-          <div class="feat__ic">🎯</div>
-          <h3>An index, not an archive</h3>
-          <p>Engram distills each note to a searchable digest of its <strong>key ideas and all formulas</strong> — so you can find and reconnect, then jump to the original page (the source of truth, embedded in every note). It <strong>filters out noise</strong> — attached papers, homeworks, long code — and never invents; illegible parts are flagged.</p>
+          <p>Pick the reader in Settings: <strong>Claude Code</strong> (vision, via your login — default) or a <strong>local</strong> <a href="https://github.com/Blaizzy/mlx-vlm" target="_blank" rel="noopener">Qwen2.5-VL</a> 7B/32B, fully on-device. Concept-map &amp; cross-link reasoning runs through Claude Code too — all from a dropdown.</p>
         </article>
         <article class="feat reveal">
           <div class="feat__ic">🕸️</div>
           <h3>Multi-layer concept graph</h3>
-          <p>Beyond folders, a holistic pass builds a <strong>hierarchy of concept graphs</strong> — Concepts → Themes → Areas — that span section groups. Nodes cluster by parent; links are grounded shared-note edges plus dashed knowledge edges. Switch layers as tabs in the app.</p>
+          <p>A holistic pass builds a <strong>hierarchy of concept graphs</strong> — Concepts → Themes → Areas — that span section groups. Click an Area to drill into its themes; nodes cluster by parent, edges are shared notes (solid) + knowledge (dashed).</p>
         </article>
         <article class="feat reveal">
           <div class="feat__ic">💬</div>
           <h3>Chat — query &amp; synthesis</h3>
-          <p>Ask your knowledge base. <strong>Query</strong> a course or a concept, or <strong>synthesise</strong> a whole field. Context is pulled from the graph + your notes; answers are <strong>grounded and cited</strong> (clickable sources), with anything <strong>beyond your notes</strong> clearly marked. Your choice of Claude model.</p>
-        </article>
-        <article class="feat reveal">
-          <div class="feat__ic">♻️</div>
-          <h3>Incremental, per section group</h3>
-          <p>Re-add one course and only its changed or new notes are re-processed, keyed on a rendered-page fingerprint — the rest of the domain is untouched. An unchanged export is a true no-op (the model never even loads), and every run reports what changed.</p>
-        </article>
-        <article class="feat reveal">
-          <div class="feat__ic">📝</div>
-          <h3>Obsidian-native output</h3>
-          <p>Plain Markdown on disk — frontmatter, <code>[[wikilinks]]</code>, embedded PDFs, section · section-group · domain overviews. Open the folder in <a href="https://obsidian.md" target="_blank" rel="noopener">Obsidian</a>, or paste big slices into a long-context LLM (Karpathy's "second brain").</p>
-        </article>
-        <article class="feat reveal">
-          <div class="feat__ic">🖥️</div>
-          <h3>Native macOS app</h3>
-          <p>A SwiftUI app to add/replace a section-group PDF (with a change report), browse notes by section group → section, read each summary <strong>with LaTeX &amp; code rendered</strong> beside its original page — and explore the multi-layer concept graph.</p>
+          <p>Ask your knowledge base. <strong>Query</strong> a course or concept, or <strong>synthesise</strong> a field. Context is pulled from the graph + your notes; answers are <strong>grounded and cited</strong>, with anything <strong>beyond your notes</strong> clearly marked.</p>
         </article>
       </div>
     </section>
@@ -377,6 +360,8 @@ uv run python -m engram status</code></pre>
             <li>Domains: many section-group PDFs as one knowledge base</li>
             <li>Searchable index entries — key ideas + all formulas (LaTeX)</li>
             <li>Filters out papers, homeworks &amp; long code notebooks</li>
+            <li><strong>Add any single PDF as one note</strong> — independent of course exports</li>
+            <li>Note ops: delete, move/rename, duplicate (durable across re-imports)</li>
             <li>Model picker: Claude Code (vision) or local Qwen2.5-VL 7B/32B</li>
             <li>Domain-wide cross-links + a multi-layer concept graph (shared across notebooks)</li>
             <li><strong>Chat (v0.2):</strong> grounded, cited query &amp; synthesis</li>
@@ -386,13 +371,13 @@ uv run python -m engram status</code></pre>
         <div class="statuscol statuscol--soon">
           <h3>⚠ Prototype caveats</h3>
           <ul>
-            <li><strong>OneNote PDF export only</strong> — no other capture sources yet</li>
+            <li><strong>Bulk auto-split is OneNote-tuned</strong> — single-page add accepts any PDF</li>
             <li><strong>macOS 14+ on Apple Silicon</strong> (~16&nbsp;GB RAM for the 7B model)</li>
             <li>Structure parsing is heuristic &amp; locale-dependent (needs an English fallback)</li>
             <li>Concept / cross-link / chat reasoning runs through your Claude Code login</li>
+            <li>The concept graph &amp; cross-links rebuild from scratch (incremental refresh is next)</li>
             <li><strong>Chat has no internet / MCP tools yet</strong> — model's own knowledge only</li>
-            <li>Re-exports aren't pixel-stable, so re-added notes read as "modified"</li>
-            <li>One-way only (OneNote → vault); never written back</li>
+            <li>One-way only (notes → vault); never written back</li>
           </ul>
         </div>
       </div>
@@ -426,9 +411,7 @@ uv run python -m engram status</code></pre>
           <h3>Links</h3>
           <ul class="reflist">
             <li><a href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">Source on GitHub ↗</a></li>
-            <li><a href="https://github.com/KevinBian107/engram/blob/master/plan/MANIFESTO.md" target="_blank" rel="noopener">Read the Manifesto ↗</a></li>
-            <li><a href="https://kbian.org" target="_blank" rel="noopener">Kaiwen Bian ↗</a></li>
-            <li><a href="https://kbian.org/logger-website/" target="_blank" rel="noopener">log(ger) — a sibling local-first tool ↗</a></li>
+            <li>A research prototype by <a href="https://kbian.org" target="_blank" rel="noopener">Kaiwen Bian ↗</a></li>
           </ul>
         </div>
       </div>
@@ -442,5 +425,38 @@ uv run python -m engram status</code></pre>
 
   <script src="graph.js" defer></script>
   <script src="app.js" defer></script>
+  <!-- KaTeX: render $…$ / $$…$$ math on the page (code/pre are ignored by default) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, { delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$',  right: '$',  display: false }
+    ], throwOnError: false });"></script>
+  <!-- light / dark toggle (overrides the OS setting; persists in localStorage) -->
+  <script>
+    (function () {
+      var btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      function effective() {
+        var t = document.documentElement.getAttribute('data-theme');
+        return (t === 'dark' || t === 'light') ? t : (mq.matches ? 'dark' : 'light');
+      }
+      function render() {
+        var dark = effective() === 'dark';
+        var icon = btn.querySelector('.nav__theme-icon');
+        if (icon) icon.textContent = dark ? '☀️' : '🌙';
+        btn.setAttribute('aria-pressed', String(dark));
+      }
+      btn.addEventListener('click', function () {
+        var next = effective() === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('engram-theme', next); } catch (e) {}
+        render();
+      });
+      if (mq.addEventListener) mq.addEventListener('change', render);
+      render();
+    })();
+  </script>
 </body>
 </html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Engram Docs — Using Engram</title>
+  <meta name="description" content="Using Engram: adding section-group PDFs or any single PDF, editing notes (delete / move / rename / duplicate / re-transcribe), choosing the model, and filters." />
+  <meta name="color-scheme" content="light dark" />
+  <script>
+    (function () { try { var t = localStorage.getItem('engram-theme');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();
+  </script>
+  <link rel="icon" href="../assets/engram_logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="docs.css" />
+</head>
+<body>
+  <header class="docs-top">
+    <a class="docs-top__brand" href="../index.html">
+      <img src="../assets/engram_logo.svg" alt="Engram logo" /> Engram
+    </a>
+    <span class="docs-top__tag">· Docs</span>
+    <span class="docs-top__spacer"></span>
+    <a class="docs-top__link" href="index.html">Docs home</a>
+    <a class="docs-top__link" href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">GitHub ↗</a>
+    <button class="nav__theme" id="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle light / dark theme">
+      <span class="nav__theme-icon" aria-hidden="true">🌙</span>
+    </button>
+  </header>
+
+  <div class="docs-wrap">
+    <aside class="docs-side">
+      <h4>Documentation</h4>
+      <a class="pagelink" href="index.html">Overview</a>
+      <a class="pagelink active" href="using.html">Using Engram</a>
+      <a class="pagelink" href="connect.html">Connecting knowledge</a>
+      <a class="pagelink" href="reference.html">Reference</a>
+      <h4 class="onthispage">On this page</h4>
+      <a href="#add">Add — ingest notes</a>
+      <a href="#provenance">Provenance</a>
+      <a href="#edit">Edit a note</a>
+      <a href="#models">Transcription models</a>
+      <a href="#filters">Filters</a>
+    </aside>
+
+    <main class="docs-main">
+      <h1>Using Engram</h1>
+      <p class="docs-lede">How notes get in, and how you edit them once they're indexed.</p>
+
+      <h2 id="add">Add — ingest notes</h2>
+      <p>The <strong>Add ▾</strong> toolbar menu has two granularities:</p>
+      <ul>
+        <li><strong>Section group (course PDF)</strong> — the bulk path. One PDF (e.g. one course) is
+          split into many notes, recovering Domain → Section group → Section → Note from the text layer.
+          This split is <strong>tuned for OneNote</strong> exports. Re-adding the same course is
+          incremental — only changed/new notes are re-processed.</li>
+        <li><strong>Single page (one note)</strong> — drop in <strong>any PDF</strong> (not just
+          OneNote) as one note. The whole file becomes a single note, filed under a domain · section
+          group · section you choose.</li>
+      </ul>
+      <div class="callout callout--tip">
+        <div class="callout__title">📄 Why two granularities</div>
+        Bulk auto-split is fast for whole courses but layout-dependent; single-page add is
+        source-agnostic and precise. In the app the single-page option is enabled once a domain has a
+        section group to file the page into.
+      </div>
+      <pre><code>uv run python -m engram add "Data Science" "CSE 234.pdf"
+uv run python -m engram add-page "Data Science" page.pdf --section "Lectures"</code></pre>
+
+      <h2 id="provenance">Provenance — why edits are durable</h2>
+      <p>Every note carries a <strong>source</strong>: <code>export</code> notes come from a
+        section-group PDF (and are diffed against it on every re-import), while <code>page</code> notes
+        were added standalone and are <strong>independent</strong>. A course re-import only diffs its
+        own export notes and <strong>never removes your added pages</strong>. This is what lets the two
+        ingest paths — and your manual edits — coexist without destroying each other.</p>
+
+      <h2 id="edit">Edit a note</h2>
+      <p>Right-click any note in the sidebar for file-like operations:</p>
+      <table class="docs-table">
+        <tr><th>Action</th><th>What it does</th></tr>
+        <tr><td>Open / Reveal in Finder</td><td>Open the note, or show its files in Finder.</td></tr>
+        <tr><td>Re-transcribe</td><td>Re-run the model on the note's preserved page and rewrite its summary.</td></tr>
+        <tr><td>Move / Rename</td><td>Relocate or retitle; an export note <strong>detaches</strong> into an independent page note at the target.</td></tr>
+        <tr><td>Duplicate</td><td>Copy to a new independent page note.</td></tr>
+        <tr><td>Delete</td><td>Remove it; an export note is <strong>tombstoned</strong> so a re-import won't resurrect it.</td></tr>
+      </table>
+      <div class="callout callout--warn">
+        <div class="callout__title">Edits make the graph stale</div>
+        Any add/edit bumps the domain's revision, so cross-links and the concept map fall behind — the
+        app shows a stale dot on <a href="connect.html#link">Link</a> / <a href="connect.html#concepts">Concepts</a>.
+        Re-run them to refresh. (<code>engram domain status "Data Science"</code> reports staleness.)
+      </div>
+
+      <h2 id="models">Transcription models</h2>
+      <p>Choose the reader in <strong>Settings → Transcription model</strong>. All produce the same
+        index-style summary.</p>
+      <table class="docs-table">
+        <tr><th>Option</th><th>What it is</th><th>Best for</th></tr>
+        <tr><td><code>claude-code</code></td><td>Claude vision via your Claude Code login (default)</td><td>Best quality &amp; math; no API key.</td></tr>
+        <tr><td><code>local-7b</code></td><td>Qwen2.5-VL 7B on-device (mlx-vlm)</td><td>Fast, free, fully offline.</td></tr>
+        <tr><td><code>local-32b</code></td><td>Qwen2.5-VL 32B on-device</td><td>Better local quality; ~3–4× slower, needs ~64 GB.</td></tr>
+      </table>
+
+      <h2 id="filters">Filters — what gets indexed</h2>
+      <p>Engram indexes knowledge, not everything. By default it <strong>skips</strong> (and reports —
+        never silently drops) noise. Toggle these in <strong>Settings</strong>.</p>
+      <table class="docs-table">
+        <tr><th>Filter</th><th>Skips</th><th>Config</th></tr>
+        <tr><td>Papers</td><td>attached papers &amp; printouts/scans</td><td><code>skip_papers</code></td></tr>
+        <tr><td>Homeworks</td><td>homework / assignment / lab / project</td><td><code>skip_homework</code></td></tr>
+        <tr><td>Long code</td><td>code notebooks over N pages</td><td><code>skip_code_over_pages</code></td></tr>
+        <tr><td>Custom</td><td>any section/title substring you add</td><td><code>skip_section_patterns</code></td></tr>
+      </table>
+
+      <p style="margin-top:2em; color:var(--muted); font-size:.9rem">
+        Next: <a href="connect.html">Connecting knowledge →</a>
+      </p>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var btn = document.getElementById('theme-toggle'); if (!btn) return;
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      function eff() { var t = document.documentElement.getAttribute('data-theme');
+        return (t === 'dark' || t === 'light') ? t : (mq.matches ? 'dark' : 'light'); }
+      function render() { var i = btn.querySelector('.nav__theme-icon'); if (i) i.textContent = eff() === 'dark' ? '☀️' : '🌙'; }
+      btn.addEventListener('click', function () { var n = eff() === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', n); try { localStorage.setItem('engram-theme', n); } catch (e) {} render(); });
+      if (mq.addEventListener) mq.addEventListener('change', render); render();
+    })();
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll(".docs-side a[href^='#']"));
+      var map = {}; links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+      var obs = new IntersectionObserver(function (es) { es.forEach(function (e) {
+        if (e.isIntersecting) { links.forEach(function (l) { l.classList.remove("active"); });
+          var a = map[e.target.id]; if (a) a.classList.add("active"); } });
+      }, { rootMargin: "-80px 0px -70% 0px" });
+      document.querySelectorAll(".docs-main h2[id]").forEach(function (h) { obs.observe(h); });
+    })();
+  </script>
+</body>
+</html>

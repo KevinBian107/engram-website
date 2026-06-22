@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Engram Docs — Reference</title>
+  <meta name="description" content="Engram reference: every toolbar icon at a glance, appearance (light/dark/system), settings, refresh, the full CLI, and honest limitations." />
+  <meta name="color-scheme" content="light dark" />
+  <script>
+    (function () { try { var t = localStorage.getItem('engram-theme');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();
+  </script>
+  <link rel="icon" href="../assets/engram_logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="docs.css" />
+</head>
+<body>
+  <header class="docs-top">
+    <a class="docs-top__brand" href="../index.html">
+      <img src="../assets/engram_logo.svg" alt="Engram logo" /> Engram
+    </a>
+    <span class="docs-top__tag">· Docs</span>
+    <span class="docs-top__spacer"></span>
+    <a class="docs-top__link" href="index.html">Docs home</a>
+    <a class="docs-top__link" href="https://github.com/KevinBian107/engram" target="_blank" rel="noopener">GitHub ↗</a>
+    <button class="nav__theme" id="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle light / dark theme">
+      <span class="nav__theme-icon" aria-hidden="true">🌙</span>
+    </button>
+  </header>
+
+  <div class="docs-wrap">
+    <aside class="docs-side">
+      <h4>Documentation</h4>
+      <a class="pagelink" href="index.html">Overview</a>
+      <a class="pagelink" href="using.html">Using Engram</a>
+      <a class="pagelink" href="connect.html">Connecting knowledge</a>
+      <a class="pagelink active" href="reference.html">Reference</a>
+      <h4 class="onthispage">On this page</h4>
+      <a href="#toolbar">Toolbar at a glance</a>
+      <a href="#appearance">Appearance</a>
+      <a href="#refresh">Refresh</a>
+      <a href="#settings">Settings</a>
+      <a href="#cli">CLI reference</a>
+      <a href="#limits">Honest limitations</a>
+    </aside>
+
+    <main class="docs-main">
+      <h1>Reference</h1>
+      <p class="docs-lede">Every toolbar action at a glance, plus the full CLI and the honest caveats.</p>
+
+      <h2 id="toolbar">Toolbar at a glance</h2>
+      <p>The toolbar is contextual: the full set shows in the notes view; the graph and chat show only a
+        <strong>Back to notes</strong> button to keep the chrome clean. Each icon shows its name as a
+        label.</p>
+      <table class="docs-table">
+        <tr><th>Icon</th><th>Does</th><th>More</th></tr>
+        <tr><td>➕ Add</td><td>Import a course PDF, or add one PDF as a single note</td><td><a href="using.html#add">Using → Add</a></td></tr>
+        <tr><td>🔗 Link</td><td>Cross-link related notes domain-wide</td><td><a href="connect.html#link">Connect → Link</a></td></tr>
+        <tr><td>🔄 Refresh</td><td>Reload domains &amp; notes from the vault</td><td><a href="#refresh">below</a></td></tr>
+        <tr><td>🧠 Concepts</td><td>Build the multi-layer concept graph</td><td><a href="connect.html#concepts">Connect → Concepts</a></td></tr>
+        <tr><td>🕸️ Graph</td><td>Open the interactive graph (drill Areas → Themes)</td><td><a href="connect.html#graph">Connect → Graph</a></td></tr>
+        <tr><td>💬 Chat</td><td>Ask your notes, grounded &amp; cited</td><td><a href="connect.html#chat">Connect → Chat</a></td></tr>
+        <tr><td>🌗 Appearance</td><td>Light / dark / system</td><td><a href="#appearance">below</a></td></tr>
+        <tr><td>⚙️ Settings</td><td>Models, filters, API key</td><td><a href="#settings">below</a></td></tr>
+      </table>
+
+      <h2 id="appearance">Appearance</h2>
+      <p>The appearance icon cycles <strong>system → light → dark</strong> and persists your choice. It
+        sets the app's appearance directly, so the whole UI — including rendered note summaries and
+        chat — follows it. Leave it on <em>system</em> to track macOS.</p>
+
+      <h2 id="refresh">Refresh</h2>
+      <p>Reloads domains and notes from the vault on disk — useful if you changed files outside the app
+        (e.g. in Obsidian) or ran the CLI in a terminal.</p>
+
+      <h2 id="settings">Settings</h2>
+      <p>The gear opens model dropdowns (transcription · concept/cross-link · chat), the content
+        <a href="using.html#filters">filters</a>, your Claude Code login status, and an optional Claude
+        API key. The concept-map, cross-link, and chat reasoning run through Claude Code by default — no
+        API key needed.</p>
+      <pre><code>uv run python -m engram config set transcribe claude-code
+uv run python -m engram config set-key sk-ant-…   <span class="cmt"># optional</span></code></pre>
+
+      <h2 id="cli">CLI reference</h2>
+      <pre><code><span class="cmt"># domains</span>
+engram domain create | list | remove | status "Data Science"
+engram domain groups "Data Science"            <span class="cmt"># section groups + sections</span>
+
+<span class="cmt"># ingest</span>
+engram add "Data Science" "CSE 234.pdf" [--group "CSE 234"]
+engram add-page "Data Science" page.pdf --section "Lectures" [--title "…"]
+
+<span class="cmt"># edit notes</span>
+engram note delete | move | duplicate &lt;note.md&gt;
+engram retranscribe &lt;note.md&gt;
+
+<span class="cmt"># connect</span>
+engram link "Data Science"
+engram concepts "Data Science" ["Mathematics"] [--layers 3]
+
+<span class="cmt"># chat (needs a concept graph)</span>
+engram chat query "Data Science" "…" (--concept "…" | --course "…")
+engram chat synthesis "Mathematics" ["Data Science"] -q "…"
+
+<span class="cmt"># inspect / config</span>
+engram inspect "CSE 234.pdf"
+engram status
+engram config set transcribe claude-code</code></pre>
+      <p style="color:var(--muted); font-size:.9rem">Run as <code>uv run python -m engram …</code> from the repo root.</p>
+
+      <h2 id="limits">Honest limitations</h2>
+      <ul>
+        <li><strong>Bulk auto-split is OneNote-tuned</strong> — other layouts may mis-split; use <code>add-page</code> for those.</li>
+        <li><strong>Structure parsing is heuristic &amp; locale-dependent</strong> (the <code>分区 … 的第 N 页</code> footer); an English fallback is future work.</li>
+        <li><strong>Re-exports aren't pixel-stable</strong>, so cross-export incremental determinism isn't fully solved.</li>
+        <li><strong>The graph rebuilds from scratch</strong> — cross-links &amp; concepts recompute each run; incremental refresh is next.</li>
+        <li><strong>Chat has no internet / external tools yet</strong> — the model's own knowledge over your notes only.</li>
+        <li><strong>One-way</strong> (notes → vault); never written back.</li>
+      </ul>
+
+      <p style="margin-top:2em; color:var(--muted); font-size:.9rem">
+        <a href="index.html">← Back to docs home</a>
+      </p>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var btn = document.getElementById('theme-toggle'); if (!btn) return;
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      function eff() { var t = document.documentElement.getAttribute('data-theme');
+        return (t === 'dark' || t === 'light') ? t : (mq.matches ? 'dark' : 'light'); }
+      function render() { var i = btn.querySelector('.nav__theme-icon'); if (i) i.textContent = eff() === 'dark' ? '☀️' : '🌙'; }
+      btn.addEventListener('click', function () { var n = eff() === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', n); try { localStorage.setItem('engram-theme', n); } catch (e) {} render(); });
+      if (mq.addEventListener) mq.addEventListener('change', render); render();
+    })();
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll(".docs-side a[href^='#']"));
+      var map = {}; links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+      var obs = new IntersectionObserver(function (es) { es.forEach(function (e) {
+        if (e.isIntersecting) { links.forEach(function (l) { l.classList.remove("active"); });
+          var a = map[e.target.id]; if (a) a.classList.add("active"); } });
+      }, { rootMargin: "-80px 0px -70% 0px" });
+      document.querySelectorAll(".docs-main h2[id]").forEach(function (h) { obs.observe(h); });
+    })();
+  </script>
+</body>
+</html>
