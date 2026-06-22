@@ -42,6 +42,21 @@
     map.forEach((_, sec) => spy.observe(sec));
   }
 
+  // mobile nav: hamburger toggles the link dropdown; tapping a link closes it
+  const burger = document.getElementById("nav-burger");
+  const nav = document.getElementById("nav");
+  if (burger && nav) {
+    const setOpen = (open) => {
+      nav.classList.toggle("nav--open", open);
+      burger.setAttribute("aria-expanded", String(open));
+      burger.textContent = open ? "✕" : "☰";
+    };
+    burger.addEventListener("click", () => setOpen(!nav.classList.contains("nav--open")));
+    nav.querySelectorAll(".nav__links a").forEach((a) =>
+      a.addEventListener("click", () => setOpen(false))
+    );
+  }
+
   // copy-to-clipboard for code blocks
   document.querySelectorAll(".copy").forEach((btn) => {
     btn.addEventListener("click", () => {
